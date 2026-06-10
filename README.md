@@ -32,10 +32,31 @@ You only do this once. After that you'll have a web link you can share.
 
 ---
 
+## Making changes later (important — read this!)
+
+**You make changes in the design chat. GitHub just hosts the finished files.**
+
+- **The chat = the workshop.** This is where the app is actually built and changed. Ask for any change there.
+- **GitHub = the display shelf.** It only shows whatever files you upload. It doesn't create anything.
+
+**The update cycle:**
+1. Go back to the design chat and describe the change (e.g. "add a 9th-grade level").
+2. A fresh download is prepared for you — just like the original.
+3. On GitHub: **Add file → Upload files** → drag the new files in → **Commit changes**.
+   (Uploading a file with the same name simply replaces the old one.)
+4. Your live link updates automatically in about a minute. Families keep using the same link.
+
+⚠️ **Don't edit the code directly on GitHub.** It's easy to break something, and your two
+copies would fall out of sync. Always make changes in the chat first, then re-upload.
+
+> **In short: ideas go to the chat, finished files go to GitHub.**
+
+---
+
 ## Good to know
 - **Student data stays on each device.** Names, progress, stickers, and the teacher password are saved only in that family's browser — nothing is uploaded or shared.
 - **Teacher dashboard / removing readers** is protected by a password you create the first time you open it (on each device).
 - **Voices** use each device's built-in text-to-speech, so they may sound a little different from computer to computer.
 - **Worksheets** print with your "Your Friendly Neighborhood SLP" watermark.
 
-Need changes? Just ask and a new version can be prepared for re-upload.
+Need changes? Just ask in the design chat and a new version will be prepared for re-upload.
