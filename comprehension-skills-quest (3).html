@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comprehension Skills Quest</title>
+<style>
+  /* ============ BRIGHT THEME DESIGN TOKENS: purple / pink / teal / yellow ============ */
+  :root{
+    --purple:#9333ea;
+    --purple-dark:#7e22ce;
+    --purple-light:#f3e8ff;
+    --pink:#ec4899;
+    --pink-light:#fce7f3;
+    --teal:#0d9488;
+    --teal-dark:#115e59;
+    --teal-light:#ccfbf1;
+    --yellow:#eab308;
+    --yellow-dark:#854d0e;
+    --yellow-light:#fef9c3;
+    --rose:#f43f5e;
+    --rose-dark:#9f1239;
+    --rose-light:#ffe4e6;
+    --heading:#581c87;
+    --text-primary:#312e4f;
+    --text-secondary:#6b7280;
+    --border:#ede9fe;
+    --border-light:#e9d5ff;
+    --shadow-md:0 4px 14px rgba(124,58,237,.10);
+    --shadow-lg:0 14px 34px rgba(124,58,237,.16);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    background:linear-gradient(160deg,#fdf4ff 0%,#fff1f7 45%,#f0fdfa 100%);
+    color:var(--text-primary);
+    min-height:100vh;
+  }
+
+  #app{max-width:880px; margin:0 auto; padding-bottom:60px;}
+
+  /* ============ TOP BAR / PROGRESS ============ */
+  header.top-bar{
+    background:linear-gradient(135deg,#9333ea,#ec4899);
+    padding:20px 24px 26px;
+    border-radius:0 0 24px 24px;
+    box-shadow:var(--shadow-lg);
+    position:relative; overflow:hidden;
+  }
+  header.top-bar::after{
+    content:""; position:absolute; top:-50px; right:-50px;
+    width:180px; height:180px; border-radius:50%; background:rgba(255,255,255,.10);
+  }
+  .top-bar-inner{position:relative; z-index:1;}
+  .student-bar{display:flex; justify-content:space-between; align-items:center; font-size:.85rem; margin-bottom:12px; color:white;}
+  .student-bar button{background:rgba(255,255,255,.2); border:none; color:white; border-radius:8px; padding:5px 12px; cursor:pointer; font-size:.78rem; font-weight:600;}
+  .student-bar button:hover{background:rgba(255,255,255,.32);}
+  .top-bar h1{margin:0 0 2px; font-size:1.4rem; font-weight:800; color:white; letter-spacing:-0.4px;}
+  .top-bar p{margin:0; color:rgba(255,255,255,.92); font-size:.88rem;}
+
+  .quest-progress{display:none; margin-top:16px;}
+  .quest-progress.show{display:block;}
+  .quest-progress-label{font-size:.82rem; font-weight:700; color:white; margin-bottom:6px;}
+  .progress-track{background:rgba(255,255,255,.28); border-radius:999px; height:9px; overflow:hidden;}
+  .progress-fill{height:100%; background:linear-gradient(90deg,#5eead4,#fde047); border-radius:999px; transition:width .4s ease;}
+
+  main{padding:24px 20px 10px;}
+
+  /* ============ VIEW TOGGLING ============ */
+  .view{display:none;}
+  .view.active{display:block; animation:fadeIn .35s ease;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+
+  /* ============ SCREEN CARD (login / dashboard centerpieces) ============ */
+  .screen-card{max-width:440px; margin:30px auto 0; background:#ffffff; border:1px solid var(--border-light); border-radius:20px; padding:32px 28px; box-shadow:var(--shadow-lg); text-align:center;}
+  .screen-card .big-emoji{font-size:2.4rem;}
+  .screen-card h2{margin:6px 0 6px; font-size:1.3rem; color:var(--heading);}
+  .screen-card .sub{color:var(--text-secondary); font-size:.88rem; margin-bottom:6px; line-height:1.5;}
+  .input-field{width:100%; padding:12px 14px; border:2px solid var(--border-light); border-radius:12px; font-size:1rem; margin:14px 0; background:#faf5ff; color:var(--text-primary); font-family:inherit;}
+  .input-field:focus{outline:none; border-color:var(--purple);}
+  .input-field::placeholder{color:#9ca3af;}
+
+  /* ============ DASHBOARD ============ */
+  .stat-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:18px;}
+  .stat-card{background:var(--purple-light); border:1px solid var(--border-light); border-radius:14px; padding:16px; text-align:center;}
+  .stat-card .stat-value{font-size:1.6rem; font-weight:800; color:var(--pink);}
+  .stat-card .stat-label{font-size:.76rem; color:var(--text-secondary); margin-top:2px; text-transform:uppercase; letter-spacing:.4px;}
+
+  /* ============ SHARED MODULE CHROME ============ */
+  .module-header{display:flex; align-items:center; gap:12px; margin-bottom:16px;}
+  .back-btn{background:#ffffff; border:1px solid var(--border-light); border-radius:12px; padding:8px 14px; font-weight:700; font-size:.82rem; color:var(--text-secondary); cursor:pointer; transition:.2s;}
+  .back-btn:hover{border-color:var(--purple); color:var(--purple);}
+  .module-header h2{margin:0; font-size:1.15rem; font-weight:800; color:var(--heading);}
+
+  .card{background:#ffffff; border:1px solid var(--border-light); border-radius:18px; padding:22px; box-shadow:var(--shadow-md); margin-bottom:16px;}
+  .passage-text{line-height:1.7; font-size:.98rem; color:var(--text-primary); margin:0 0 12px;}
+
+  .btn{border:none; border-radius:12px; padding:11px 20px; font-weight:700; font-size:.9rem; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease;}
+  .btn:active{transform:scale(.96);}
+  .btn-primary{background:linear-gradient(135deg,#9333ea,#ec4899); color:white;}
+  .btn-primary:hover{box-shadow:0 0 0 3px rgba(236,72,153,.25);}
+  .btn-secondary{background:var(--purple-light); color:var(--purple-dark); border:1px solid var(--border-light);}
+  .btn-secondary:hover{background:#ecd9ff; border-color:var(--purple); color:var(--purple-dark);}
+  .btn-success{background:linear-gradient(135deg,#0d9488,#0f766e); color:white;}
+  .btn:disabled{opacity:.4; cursor:not-allowed;}
+  .hidden-btn{display:none;}
+  .hidden-btn.show{display:inline-block;}
+
+  .feedback-panel{border-radius:14px; padding:15px 17px; margin-top:12px; font-size:.9rem; line-height:1.5; display:none;}
+  .feedback-panel.show{display:block; animation:fadeIn .3s ease;}
+  .feedback-panel.correct{background:var(--teal-light); border:1px solid var(--teal); color:var(--teal-dark);}
+  .feedback-panel.incorrect{background:var(--rose-light); border:1px solid var(--rose); color:var(--rose-dark);}
+  .feedback-panel.info{background:var(--yellow-light); border:1px solid var(--yellow); color:var(--yellow-dark);}
+
+  /* ============ READ TO ME ============ */
+  .speaker-btn{display:inline-flex; align-items:center; gap:6px; background:var(--teal-light); border:1px solid var(--teal); color:var(--teal-dark); border-radius:999px; padding:6px 14px; font-size:.8rem; font-weight:700; cursor:pointer; margin-bottom:12px; transition:.18s;}
+  .speaker-btn:hover{background:var(--teal); color:white;}
+  .speaker-btn.speaking{background:var(--teal); color:white;}
+
+  /* ============ MAIN IDEA CHOICES ============ */
+  .choice-btn{display:block; width:100%; text-align:left; background:#ffffff; border:2px solid var(--border-light); border-radius:14px; padding:14px 16px; margin-bottom:10px; font-size:.9rem; color:var(--text-primary); cursor:pointer; transition:.18s;}
+  .choice-btn:hover:not(:disabled){border-color:var(--purple); background:var(--purple-light);}
+  .choice-btn:disabled{cursor:default;}
+  .choice-btn.correct-pick{border-color:var(--teal); background:var(--teal-light); color:var(--teal-dark);}
+  .choice-btn.incorrect-pick{border-color:var(--rose); background:var(--rose-light); color:var(--rose-dark); animation:shake .35s;}
+  @keyframes shake{20%,60%{transform:translateX(-5px);} 40%,80%{transform:translateX(5px);}}
+
+  /* ============ SEQUENCE ============ */
+  .seq-slots{margin-bottom:18px;}
+  .seq-slot{border:2px dashed var(--border-light); border-radius:12px; min-height:54px; display:flex; align-items:center; padding:0 14px; margin-bottom:10px; color:var(--text-secondary); font-weight:600; font-size:.85rem; transition:.2s;}
+  .seq-slot .slot-num{background:var(--purple-light); color:var(--purple-dark); font-size:.78rem; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; margin-right:10px; flex-shrink:0;}
+  .seq-slot.filled{border-style:solid; border-color:var(--yellow); background:var(--yellow-light); color:var(--text-primary); cursor:pointer;}
+  .seq-slot.correct{border-color:var(--teal); background:var(--teal-light);}
+  .seq-slot.incorrect{border-color:var(--rose); background:var(--rose-light);}
+  .pool-label{font-size:.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px;}
+  .pool-area{display:flex; flex-wrap:wrap; gap:8px; min-height:50px;}
+  .pool-chip{background:#ffffff; border:2px solid var(--border-light); border-radius:12px; padding:10px 14px; cursor:pointer; font-size:.86rem; color:var(--text-primary); transition:.18s;}
+  .pool-chip:hover{border-color:var(--yellow); transform:translateY(-2px);}
+
+  /* ============ DETAILS ============ */
+  .det-question-box{background:var(--purple-light); border:1px solid var(--purple); border-radius:14px; padding:14px 16px; margin-bottom:16px; font-size:.92rem; color:var(--purple-dark);}
+  .det-question-box strong{display:block; font-size:.74rem; text-transform:uppercase; letter-spacing:.5px; margin-bottom:4px; color:var(--purple);}
+  .det-sentence{cursor:pointer; border-radius:5px; padding:1px 2px; transition:.15s;}
+  .det-sentence:hover{background:rgba(147,51,234,.08);}
+  .det-sentence.correct-found{background:#99f6e4; box-shadow:inset 0 -2px 0 var(--teal);}
+  .det-sentence.wrong-flash{background:#fecdd3; box-shadow:inset 0 -2px 0 var(--rose);}
+
+  .write-box label{display:block; font-weight:700; font-size:.86rem; margin:18px 0 8px; color:var(--text-primary);}
+  .write-box textarea{width:100%; min-height:90px; border:2px solid var(--border-light); border-radius:12px; padding:12px; font-size:.9rem; font-family:inherit; resize:vertical; background:#faf5ff; color:var(--text-primary);}
+  .write-box textarea:focus{outline:none; border-color:var(--teal);}
+  .char-count{font-size:.74rem; color:var(--text-secondary); text-align:right; margin-top:4px;}
+
+  /* ============ PASSAGE / QUEST COMPLETE ============ */
+  .complete-card{text-align:center;}
+  .complete-card .big-emoji{font-size:2.6rem;}
+  .star-row{font-size:2.2rem; letter-spacing:6px; margin:14px 0;}
+  .breakdown-row{display:flex; justify-content:space-between; align-items:center; padding:10px 4px; border-bottom:1px solid var(--border); font-size:.88rem;}
+  .breakdown-row:last-child{border-bottom:none;}
+
+  /* ============ TOAST ============ */
+  .toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--heading); color:white; padding:12px 20px; border-radius:12px; font-size:.85rem; font-weight:600; box-shadow:var(--shadow-lg); opacity:0; pointer-events:none; transition:.3s; z-index:1000; max-width:90%; text-align:center; border:1px solid rgba(255,255,255,.15);}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  .confetti-piece{position:fixed; top:-10px; font-size:1.4rem; pointer-events:none; z-index:999; animation:fall linear forwards;}
+  @keyframes fall{to{transform:translateY(105vh) rotate(360deg); opacity:0.3;}}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <header class="top-bar">
+    <div class="top-bar-inner">
+      <div class="student-bar" id="student-bar" style="display:none;">
+        <span id="student-greeting"></span>
+        <button onclick="App.switchStudent()">Switch Student</button>
+      </div>
+      <h1>🚀 Comprehension Skills Quest</h1>
+      <p>Five passages. Three skills each. One quest.</p>
+      <div class="quest-progress" id="quest-progress">
+        <div class="quest-progress-label" id="quest-progress-label">Passage 1 of 5 | Skill: The Core</div>
+        <div class="progress-track"><div class="progress-fill" id="quest-progress-fill" style="width:0%;"></div></div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ===================== LOGIN ===================== -->
+    <section class="view active" id="view-login">
+      <div class="screen-card">
+        <div class="big-emoji">👋</div>
+        <h2>Welcome, Reader!</h2>
+        <p class="sub">Enter your name to begin. Your lifetime star total is saved, so it'll be here next time.</p>
+        <input type="text" id="login-name-input" class="input-field" placeholder="Type your name..." onkeydown="if(event.key==='Enter'){App.login();}">
+        <button class="btn btn-primary" style="width:100%;" onclick="App.login()">Continue →</button>
+        <div class="feedback-panel" id="login-feedback"></div>
+      </div>
+    </section>
+
+    <!-- ===================== DASHBOARD ===================== -->
+    <section class="view" id="view-dashboard">
+      <div class="screen-card" style="max-width:520px;">
+        <div class="big-emoji">🧭</div>
+        <h2 id="dash-greeting">Ready for your next quest?</h2>
+        <p class="sub">Each quest session is 5 passages. For every passage you'll tackle The Core, The Timeline, and The Detective in order.</p>
+
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="dash-total-stars">0 ⭐</div>
+            <div class="stat-label">Lifetime Stars</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="dash-sessions">0</div>
+            <div class="stat-label">Quests Completed</div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%; margin-top:22px; padding:14px;" onclick="Quest.start()">Start New Quest Session 🚀</button>
+      </div>
+    </section>
+
+    <!-- ===================== SKILL 1: THE CORE (Main Idea) ===================== -->
+    <section class="view" id="view-mainidea">
+      <div class="module-header">
+        <button class="back-btn" onclick="Nav.show('dashboard')">← Exit Quest</button>
+        <h2>🎯 The Core</h2>
+      </div>
+      <div class="card">
+        <h3 id="mi-title" style="margin-top:0; color:#581c87;"></h3>
+        <button class="speaker-btn" id="mi-speak-btn" onclick="TTS.toggle(Quest.currentPassage.fullText,'mi-speak-btn')">🔊 Read to Me</button>
+        <div id="mi-text"></div>
+      </div>
+      <div class="card">
+        <p style="font-weight:700; margin-top:0; margin-bottom:14px; color:#581c87;" id="mi-question"></p>
+        <div id="mi-choices"></div>
+        <div class="feedback-panel" id="mi-feedback"></div>
+        <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-secondary hidden-btn" id="mi-retry-btn" onclick="MainIdeaSkill.reset()">Try Again</button>
+          <button class="btn btn-success hidden-btn" id="mi-continue-btn" onclick="Quest.completeSkill('mainidea')">Continue to The Timeline ⏳</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SKILL 2: THE TIMELINE (Sequence) ===================== -->
+    <section class="view" id="view-sequence">
+      <div class="module-header">
+        <button class="back-btn" onclick="Nav.show('dashboard')">← Exit Quest</button>
+        <h2>⏳ The Timeline</h2>
+      </div>
+      <div class="card">
+        <h3 id="seq-title" style="margin-top:0; color:#581c87;"></h3>
+        <button class="speaker-btn" id="seq-speak-btn" onclick="TTS.toggle(Quest.currentPassage.fullText,'seq-speak-btn')">🔊 Read to Me</button>
+        <div id="seq-text"></div>
+      </div>
+      <div class="card">
+        <p style="font-weight:700; color:var(--text-secondary); font-size:.86rem; margin-top:0;">Click the events below in the order they happened. Click a filled slot to undo it.</p>
+        <div class="seq-slots" id="seq-slots"></div>
+        <div class="pool-label">Mixed-up events:</div>
+        <div class="pool-area" id="seq-pool"></div>
+        <div class="feedback-panel" id="seq-feedback"></div>
+        <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="SequenceSkill.check()">Check My Sequence</button>
+          <button class="btn btn-secondary" onclick="SequenceSkill.reset()">Reset</button>
+          <button class="btn btn-success hidden-btn" id="seq-continue-btn" onclick="Quest.completeSkill('sequence')">Continue to The Detective 🔍</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SKILL 3: THE DETECTIVE (Details) ===================== -->
+    <section class="view" id="view-details">
+      <div class="module-header">
+        <button class="back-btn" onclick="Nav.show('dashboard')">← Exit Quest</button>
+        <h2>🔍 The Detective</h2>
+      </div>
+      <div class="card">
+        <h3 id="det-title" style="margin-top:0; color:#581c87;"></h3>
+        <button class="speaker-btn" id="det-speak-btn" onclick="TTS.toggle(Quest.currentPassage.fullText,'det-speak-btn')">🔊 Read to Me</button>
+        <div id="det-text"></div>
+      </div>
+      <div class="card">
+        <div class="det-question-box">
+          <strong>Your Mission</strong>
+          <span id="det-question"></span>
+        </div>
+
+        <div class="write-box hidden-btn" id="det-write-wrap">
+          <label>✍️ Write your answer:</label>
+          <textarea id="det-write-input" placeholder="Type your answer here..." oninput="DetailsSkill.updateCharCount()"></textarea>
+          <div class="char-count" id="det-char-count">0 words</div>
+          <button class="btn btn-primary" style="margin-top:12px;" onclick="DetailsSkill.submitText()">Submit Answer</button>
+        </div>
+
+        <div class="feedback-panel" id="det-feedback"></div>
+        <div style="margin-top:16px;">
+          <button class="btn btn-success hidden-btn" id="det-finish-btn" onclick="Quest.completeSkill('details')">Finish Passage ✅</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PASSAGE COMPLETE ===================== -->
+    <section class="view" id="view-passage-complete">
+      <div class="screen-card complete-card" style="max-width:480px;">
+        <div class="big-emoji">🎉</div>
+        <h2>Passage Complete!</h2>
+        <p class="sub" id="pc-passage-title"></p>
+        <div class="star-row" id="pc-stars"></div>
+        <div style="text-align:left; margin-top:10px;" id="pc-breakdown"></div>
+        <button class="btn btn-primary" style="width:100%; margin-top:20px; padding:14px;" id="pc-next-btn" onclick="Quest.nextPassage()">Next Passage →</button>
+      </div>
+    </section>
+
+    <!-- ===================== QUEST COMPLETE ===================== -->
+    <section class="view" id="view-quest-complete">
+      <div class="screen-card complete-card" style="max-width:520px;">
+        <div class="big-emoji">🏆</div>
+        <h2>Quest Complete!</h2>
+        <p class="sub" id="qc-session-stars"></p>
+        <div style="text-align:left; margin-top:14px;" id="qc-breakdown"></div>
+        <div class="stat-grid" style="margin-top:18px;">
+          <div class="stat-card">
+            <div class="stat-value" id="qc-lifetime-stars">0 ⭐</div>
+            <div class="stat-label">Lifetime Stars</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="qc-sessions">0</div>
+            <div class="stat-label">Quests Completed</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+          <button class="btn btn-secondary" style="flex:1;" onclick="Nav.show('dashboard'); refreshDashboard();">Dashboard</button>
+          <button class="btn btn-primary" style="flex:1;" onclick="Quest.start()">Play Again 🚀</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+/* =========================================================================
+   PASSAGE BANK
+   5 self-contained passages. Each has paragraphs (always shown), an
+   optional sentences[] array (only used when detailsQuestion.type is
+   "click"), a main idea question, 4 sequence events in correct order, and
+   a details question that is either "click" (find the exact sentence) or
+   "text" (write a short response).
+========================================================================= */
+const PASSAGE_BANK = [
+  {
+    id: "p1",
+    title: "The Hidden World of Bioluminescence",
+    paragraphs: [
+      "Sunlight can only reach about 650 feet into the ocean. Below that depth lies a world of permanent darkness that covers more than ninety percent of the ocean's volume. In this lightless zone, an astonishing number of creatures have evolved the ability to produce their own light, a phenomenon called bioluminescence.",
+      "Most bioluminescent animals create light through a chemical reaction inside special cells called photophores. When a molecule called luciferin reacts with oxygen, it releases energy in the form of light rather than heat. The anglerfish puts this glow to clever use, dangling a lighted lure above its mouth to attract curious prey close enough to swallow in one gulp.",
+      "Light in the deep sea serves more than one purpose. Some squid release glowing ink to startle predators and slip away in the confusion, while certain species of deep-sea shrimp use flashes of light to signal potential mates across the darkness. For animals living where finding food, avoiding predators, and locating a mate are constant challenges, producing their own light can mean the difference between survival and starvation.",
+      "Scientists are still discovering new bioluminescent species every year, often using submersibles to explore depths humans could never reach unprotected. Researchers have even borrowed bioluminescent proteins to develop medical tools, such as markers that glow to reveal cancer cells inside the body. The deep sea, once thought to be empty and lifeless, has turned out to be lit with secrets."
+    ],
+    sentences: [
+      "Sunlight can only reach about 650 feet into the ocean.",
+      "Below that depth lies a world of permanent darkness that covers more than ninety percent of the ocean's volume.",
+      "In this lightless zone, an astonishing number of creatures have evolved the ability to produce their own light, a phenomenon called bioluminescence.",
+      "Most bioluminescent animals create light through a chemical reaction inside special cells called photophores.",
+      "When a molecule called luciferin reacts with oxygen, it releases energy in the form of light rather than heat.",
+      "The anglerfish puts this glow to clever use, dangling a lighted lure above its mouth to attract curious prey close enough to swallow in one gulp.",
+      "Light in the deep sea serves more than one purpose.",
+      "Some squid release glowing ink to startle predators and slip away in the confusion, while certain species of deep-sea shrimp use flashes of light to signal potential mates across the darkness.",
+      "For animals living where finding food, avoiding predators, and locating a mate are constant challenges, producing their own light can mean the difference between survival and starvation.",
+      "Scientists are still discovering new bioluminescent species every year, often using submersibles to explore depths humans could never reach unprotected.",
+      "Researchers have even borrowed bioluminescent proteins to develop medical tools, such as markers that glow to reveal cancer cells inside the body.",
+      "The deep sea, once thought to be empty and lifeless, has turned out to be lit with secrets."
+    ],
+    mainIdeaQuestion: {
+      question: "What is the main idea of this passage?",
+      options: [
+        "Bioluminescent light helps deep-sea animals find food, avoid predators, and locate mates in an environment without sunlight.",
+        "Sunlight only reaches about 650 feet into the ocean.",
+        "Many animals in nature use light or color to survive in their environments.",
+        "Scientists have not yet discovered how bioluminescent animals create light."
+      ],
+      correctIndex: 0
+    },
+    sequenceEvents: [
+      "Light-producing cells called photophores combine a molecule called luciferin with oxygen.",
+      "The chemical reaction releases energy as light instead of heat.",
+      "Animals use this glow to attract prey, startle predators, or signal mates.",
+      "Scientists study the glowing proteins to create new tools, such as glowing markers for medical research."
+    ],
+    detailsQuestion: {
+      type: "click",
+      question: "Click the exact sentence that explains why producing light helps deep-sea creatures survive.",
+      targetIndex: 8
+    }
+  },
+
+  {
+    id: "p2",
+    title: "Lost in the Canyon",
+    paragraphs: [
+      "Jamie and her younger brother Eli loved exploring the dry wash behind their grandfather's ranch, but they had never hiked all the way to the red rock canyon before. One Saturday morning, certain they could find their way back easily, they packed two water bottles and set off without telling anyone where they were headed.",
+      "By early afternoon, the canyon walls had narrowed into a maze of nearly identical turns, and the trail marker they had followed earlier was nowhere in sight. Eli's water bottle was empty, and the shadows beginning to stretch across the rock told Jamie that evening was not far off. Panic crept into her chest, but she remembered her grandfather's advice: when you're lost, stop moving and think before you make things worse.",
+      "Jamie noticed that the wind kept blowing sand and dust in the same direction every few minutes, always toward the canyon's wider mouth. Reasoning that the wind was likely funneling in from the open desert beyond the entrance, she decided to walk against the breeze rather than guessing randomly at each fork. She also began stacking small piles of rocks at each turn, so that if the plan failed, they could backtrack to where they started.",
+      "After nearly an hour of walking into the wind, the narrow canyon finally opened up, and Jamie spotted the dry wash that led straight back toward the ranch. Eli's legs were shaking with relief as they climbed the last ridge and saw the ranch house lights in the distance. That night, their grandfather sat them down and made them promise that next time, they would always tell someone exactly where they were going before they left."
+    ],
+    mainIdeaQuestion: {
+      question: "What is the main idea of this passage?",
+      options: [
+        "Jamie used careful observation and problem-solving to lead herself and her brother safely out of a canyon after getting lost.",
+        "Eli's water bottle ran out of water during the hike.",
+        "Hiking in canyons can be dangerous if you aren't careful.",
+        "Jamie and Eli got lost because they followed the wind in the wrong direction."
+      ],
+      correctIndex: 0
+    },
+    sequenceEvents: [
+      "Jamie and Eli set off into the canyon without telling anyone where they were going.",
+      "The canyon walls narrowed into confusing turns, and Eli's water ran out.",
+      "Jamie noticed the wind blowing toward the canyon's entrance and decided to follow it.",
+      "The pair finally reached the canyon's opening and made it safely back to the ranch."
+    ],
+    detailsQuestion: {
+      type: "text",
+      prompt: "In your own words, explain how Jamie figured out which direction would lead them out of the canyon. Use a detail from the story to support your answer.",
+      minWords: 6
+    }
+  },
+
+  {
+    id: "p3",
+    title: "The Great Wall: Engineering Marvel of Ancient China",
+    paragraphs: [
+      "When people picture the Great Wall of China, they often imagine a single, unbroken structure built all at once. In reality, the wall is a collection of many separate walls and fortifications built over more than two thousand years by different rulers, often for the same basic reason: to defend Chinese territory from invasions by nomadic groups from the north.",
+      "The earliest wall sections were built by individual warring states during the centuries before China was unified, using whatever materials were available nearby, including packed earth, wood, and stone. When the Qin dynasty unified China in 221 BCE, the emperor ordered many of these separate walls to be connected and extended into a single defensive line stretching across the northern frontier.",
+      "The version of the wall most visitors recognize today, with its tall stone and brick towers, was largely built much later during the Ming dynasty, which ruled from 1368 to 1644. Ming engineers reinforced weaker earthen sections with fired brick and solid stone, added watchtowers at regular intervals, and built the wall wide enough for soldiers and supply carts to travel along its top. This rebuilding made the wall far sturdier and able to survive for centuries, which is why so much of the Ming-era wall still stands today while older sections have crumbled away.",
+      "Today, the Great Wall stretches across deserts, mountains, and grasslands for thousands of miles, though large stretches have eroded or been deliberately dismantled over time. It remains one of the most visited historical sites in the world and a lasting symbol of the scale ancient engineers were willing to attempt in order to protect their land."
+    ],
+    sentences: [
+      "When people picture the Great Wall of China, they often imagine a single, unbroken structure built all at once.",
+      "In reality, the wall is a collection of many separate walls and fortifications built over more than two thousand years by different rulers, often for the same basic reason: to defend Chinese territory from invasions by nomadic groups from the north.",
+      "The earliest wall sections were built by individual warring states during the centuries before China was unified, using whatever materials were available nearby, including packed earth, wood, and stone.",
+      "When the Qin dynasty unified China in 221 BCE, the emperor ordered many of these separate walls to be connected and extended into a single defensive line stretching across the northern frontier.",
+      "The version of the wall most visitors recognize today, with its tall stone and brick towers, was largely built much later during the Ming dynasty, which ruled from 1368 to 1644.",
+      "Ming engineers reinforced weaker earthen sections with fired brick and solid stone, added watchtowers at regular intervals, and built the wall wide enough for soldiers and supply carts to travel along its top.",
+      "This rebuilding made the wall far sturdier and able to survive for centuries, which is why so much of the Ming-era wall still stands today while older sections have crumbled away.",
+      "Today, the Great Wall stretches across deserts, mountains, and grasslands for thousands of miles, though large stretches have eroded or been deliberately dismantled over time.",
+      "It remains one of the most visited historical sites in the world and a lasting symbol of the scale ancient engineers were willing to attempt in order to protect their land."
+    ],
+    mainIdeaQuestion: {
+      question: "What is the main idea of this passage?",
+      options: [
+        "The Great Wall of China was built in stages by different rulers over thousands of years, with the Ming dynasty's stone and brick construction making it the most lasting version.",
+        "The Ming dynasty ruled China from 1368 to 1644.",
+        "Ancient civilizations often built large structures to defend their land.",
+        "The Great Wall was built entirely at once during the Qin dynasty and has remained unchanged since."
+      ],
+      correctIndex: 0
+    },
+    sequenceEvents: [
+      "Individual warring states built separate wall sections using local materials like packed earth and wood.",
+      "The Qin dynasty unified China and connected the existing walls into one defensive line.",
+      "Centuries later, the Ming dynasty rebuilt weaker sections with brick and stone and added watchtowers.",
+      "Today, the surviving sections of the wall attract millions of visitors as a historical landmark."
+    ],
+    detailsQuestion: {
+      type: "click",
+      question: "Click the exact sentence that explains why the Ming dynasty's rebuilding made the wall more durable.",
+      targetIndex: 6
+    }
+  },
+
+  {
+    id: "p4",
+    title: "The Group Project",
+    paragraphs: [
+      "When Mr. Alvarez announced that the final history project would be a group presentation, Priya's stomach sank. She had been placed with Marcus and Tanya, two classmates she barely knew, and the project was due in exactly two weeks.",
+      "The first meeting did not go smoothly. Marcus wanted to build a diorama, Tanya insisted on writing a script for a skit, and Priya thought a slideshow would be easiest to finish on time. After twenty minutes of arguing, no decisions had been made, and the group still hadn't even agreed on which historical event to research.",
+      "Frustrated, Priya suggested they each write down their idea on a sticky note and explain for one minute why it mattered to them, instead of interrupting each other. Hearing each other out fully, rather than just waiting for a turn to argue, helped the group realize they could combine all three ideas: a slideshow presentation that included a short skit performed in front of a backdrop Marcus could build.",
+      "By listening to one another instead of competing to be right, the group finished their combined project two days early, and Mr. Alvarez later told the class it was one of the most creative presentations he had seen that year."
+    ],
+    mainIdeaQuestion: {
+      question: "What is the main idea of this passage?",
+      options: [
+        "By learning to listen to each other's ideas instead of arguing, Priya's group combined their different ideas into one successful project.",
+        "Marcus wanted to build a diorama for the history project.",
+        "Group projects in school are usually difficult to complete.",
+        "Priya's group failed to finish their project on time because they couldn't agree."
+      ],
+      correctIndex: 0
+    },
+    sequenceEvents: [
+      "Priya was placed in a group with Marcus and Tanya for a history project.",
+      "The group argued over three different project ideas without making progress.",
+      "Priya suggested they take turns explaining their ideas without interrupting each other.",
+      "The group combined all three ideas and finished their project two days early."
+    ],
+    detailsQuestion: {
+      type: "text",
+      prompt: "In your own words, explain the strategy Priya used to help her group stop arguing. Use a detail from the story to support your answer.",
+      minWords: 6
+    }
+  },
+
+  {
+    id: "p5",
+    title: "Why Volcanoes Erupt",
+    paragraphs: [
+      "Beneath the Earth's solid crust lies a layer of partly molten rock called the mantle. In certain areas, especially near the edges of tectonic plates, heat and pressure can melt rock into a thick liquid called magma. Because magma is less dense than the solid rock surrounding it, it slowly rises toward the surface.",
+      "As magma rises into a chamber beneath a volcano, dissolved gases trapped inside it begin to expand, similar to the way carbon dioxide bubbles form when a soda bottle is shaken. With nowhere to escape, these expanding gases build enormous pressure inside the magma chamber. Eventually, the pressure becomes too great for the surrounding rock to contain, and the trapped gases force the magma upward through cracks and vents toward the surface.",
+      "When the pressure finally releases, the result is an eruption. Depending on how thick the magma is and how much gas it contains, an eruption might be a slow, flowing release of lava, or it might be an explosive blast that shoots ash, rock, and gas high into the sky. Thinner, more fluid magma tends to flow out more gently, while thick, gas-rich magma is more likely to explode violently.",
+      "After an eruption, the lava that flows across the surface eventually cools and hardens into new rock, gradually building up the land around the volcano. Over thousands of years, repeated eruptions can build entire mountains, islands, and even reshape coastlines, proving that volcanoes are as much builders as they are destroyers."
+    ],
+    sentences: [
+      "Beneath the Earth's solid crust lies a layer of partly molten rock called the mantle.",
+      "In certain areas, especially near the edges of tectonic plates, heat and pressure can melt rock into a thick liquid called magma.",
+      "Because magma is less dense than the solid rock surrounding it, it slowly rises toward the surface.",
+      "As magma rises into a chamber beneath a volcano, dissolved gases trapped inside it begin to expand, similar to the way carbon dioxide bubbles form when a soda bottle is shaken.",
+      "With nowhere to escape, these expanding gases build enormous pressure inside the magma chamber.",
+      "Eventually, the pressure becomes too great for the surrounding rock to contain, and the trapped gases force the magma upward through cracks and vents toward the surface.",
+      "When the pressure finally releases, the result is an eruption.",
+      "Depending on how thick the magma is and how much gas it contains, an eruption might be a slow, flowing release of lava, or it might be an explosive blast that shoots ash, rock, and gas high into the sky.",
+      "Thinner, more fluid magma tends to flow out more gently, while thick, gas-rich magma is more likely to explode violently.",
+      "After an eruption, the lava that flows across the surface eventually cools and hardens into new rock, gradually building up the land around the volcano.",
+      "Over thousands of years, repeated eruptions can build entire mountains, islands, and even reshape coastlines, proving that volcanoes are as much builders as they are destroyers."
+    ],
+    mainIdeaQuestion: {
+      question: "What is the main idea of this passage?",
+      options: [
+        "Pressure from expanding gases trapped in rising magma builds up until it forces an eruption, which can range from gentle lava flows to explosive blasts.",
+        "Magma is less dense than the solid rock that surrounds it.",
+        "Natural disasters can be very destructive to the environment around them.",
+        "All volcanic eruptions are slow, gentle flows of lava."
+      ],
+      correctIndex: 0
+    },
+    sequenceEvents: [
+      "Heat and pressure inside the Earth melt rock into magma, which rises because it is less dense than solid rock.",
+      "As magma rises, gases trapped inside it begin to expand inside the magma chamber.",
+      "Pressure builds until it forces the magma upward through cracks and vents.",
+      "The eruption releases lava that eventually cools and hardens into new rock."
+    ],
+    detailsQuestion: {
+      type: "click",
+      question: "Click the exact sentence that explains what causes pressure to build up beneath a volcano.",
+      targetIndex: 4
+    }
+  }
+];
+
+// Precompute a flat "fullText" string per passage for Read-to-Me.
+PASSAGE_BANK.forEach(p => { p.fullText = p.paragraphs.join(" "); });
+
+const SKILL_LABELS = { mainidea: "The Core", sequence: "The Timeline", details: "The Detective" };
+const SKILL_ORDER_INDEX = { mainidea: 0, sequence: 1, details: 2 };
+
+/* =========================================================================
+   UTILITIES
+========================================================================= */
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function renderPassageText(containerId, passage, clickable) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = "";
+  if (clickable) {
+    passage.sentences.forEach((s, i) => {
+      const span = document.createElement("span");
+      span.className = "det-sentence";
+      span.id = "det-sentence-" + i;
+      span.textContent = s + " ";
+      span.onclick = () => DetailsSkill.selectSentence(i);
+      el.appendChild(span);
+    });
+  } else {
+    passage.paragraphs.forEach(p => {
+      const pEl = document.createElement("p");
+      pEl.className = "passage-text";
+      pEl.textContent = p;
+      el.appendChild(pEl);
+    });
+  }
+}
+
+function renderStars(count, total) {
+  let out = "";
+  for (let i = 0; i < total; i++) out += i < count ? "⭐" : "☆";
+  return out;
+}
+
+/* =========================================================================
+   PERSISTENT STORAGE + PLAYER (cumulative lifetime stats)
+========================================================================= */
+const Storage = {
+  keyFor(name) {
+    const clean = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    return "csq-player-" + (clean || "anonymous");
+  },
+  async load(name) {
+    if (!window.storage) return null;
+    try {
+      const res = await window.storage.get(this.keyFor(name), false);
+      return res ? JSON.parse(res.value) : null;
+    } catch (e) {
+      return null;
+    }
+  },
+  async save(player) {
+    if (!window.storage) return;
+    try {
+      await window.storage.set(this.keyFor(player.name), JSON.stringify(player), false);
+    } catch (e) {
+      console.error("Could not save progress", e);
+      Toast.show("⚠️ Could not save progress right now.");
+    }
+  }
+};
+
+const Player = {
+  name: null,
+  totalStars: 0,
+  sessionsCompleted: 0,
+
+  async loginAs(name) {
+    const existing = await Storage.load(name);
+    this.name = name;
+    this.totalStars = existing ? (existing.totalStars || 0) : 0;
+    this.sessionsCompleted = existing ? (existing.sessionsCompleted || 0) : 0;
+    return !!existing;
+  },
+
+  addSessionStars(stars) {
+    this.totalStars += stars;
+    this.sessionsCompleted += 1;
+    Storage.save({ name: this.name, totalStars: this.totalStars, sessionsCompleted: this.sessionsCompleted });
+  }
+};
+
+/* =========================================================================
+   TOAST
+========================================================================= */
+const Toast = {
+  _timer: null,
+  show(msg, duration = 3000) {
+    let el = document.getElementById("app-toast");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "app-toast";
+      el.className = "toast";
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(this._timer);
+    this._timer = setTimeout(() => el.classList.remove("show"), duration);
+  }
+};
+
+/* =========================================================================
+   TEXT-TO-SPEECH ("Read to Me")
+========================================================================= */
+const TTS = {
+  activeBtnId: null,
+  toggle(text, btnId) {
+    if (!("speechSynthesis" in window)) {
+      Toast.show("Read-aloud isn't supported in this browser.");
+      return;
+    }
+    if (this.activeBtnId === btnId && speechSynthesis.speaking) {
+      this.stop();
+      return;
+    }
+    this.stop();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.rate = 0.95;
+    utter.onend = () => this.clearActive();
+    utter.onerror = () => this.clearActive();
+    this.activeBtnId = btnId;
+    const btn = document.getElementById(btnId);
+    btn.classList.add("speaking");
+    btn.innerHTML = "⏸ Stop Reading";
+    speechSynthesis.speak(utter);
+  },
+  stop() {
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    this.clearActive();
+  },
+  clearActive() {
+    if (this.activeBtnId) {
+      const btn = document.getElementById(this.activeBtnId);
+      if (btn) { btn.classList.remove("speaking"); btn.innerHTML = "🔊 Read to Me"; }
+    }
+    this.activeBtnId = null;
+  }
+};
+
+/* =========================================================================
+   NAVIGATION
+========================================================================= */
+const Nav = {
+  show(viewName) {
+    document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+    document.getElementById("view-" + viewName).classList.add("active");
+    document.getElementById("quest-progress").classList.toggle(
+      "show",
+      ["mainidea", "sequence", "details"].includes(viewName)
+    );
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+};
+
+function updateProgressBar() {
+  const total = Quest.order.length;
+  const skillIdx = SKILL_ORDER_INDEX[Quest.currentSkill];
+  document.getElementById("quest-progress-label").textContent =
+    `Passage ${Quest.currentIndex + 1} of ${total} | Skill: ${SKILL_LABELS[Quest.currentSkill]}`;
+  const pct = ((Quest.currentIndex * 3 + skillIdx) / (total * 3)) * 100;
+  document.getElementById("quest-progress-fill").style.width = pct + "%";
+}
+
+/* =========================================================================
+   TOP-LEVEL APP ACTIONS
+========================================================================= */
+const App = {
+  async login() {
+    const input = document.getElementById("login-name-input");
+    const name = input.value.trim();
+    const fb = document.getElementById("login-feedback");
+    if (!name) {
+      fb.textContent = "Please type your name to continue.";
+      fb.className = "feedback-panel show incorrect";
+      return;
+    }
+    fb.className = "feedback-panel";
+
+    const hadExisting = await Player.loginAs(name);
+    Toast.show(hadExisting ? `Welcome back, ${name}! ⭐ ${Player.totalStars} lifetime stars.` : `Nice to meet you, ${name}!`);
+
+    document.getElementById("student-bar").style.display = "flex";
+    document.getElementById("student-greeting").textContent = "👤 " + Player.name;
+    refreshDashboard();
+    Nav.show("dashboard");
+  },
+
+  switchStudent() {
+    TTS.stop();
+    Player.name = null;
+    document.getElementById("login-name-input").value = "";
+    document.getElementById("login-feedback").className = "feedback-panel";
+    document.getElementById("student-bar").style.display = "none";
+    Nav.show("login");
+  }
+};
+
+function refreshDashboard() {
+  document.getElementById("dash-greeting").textContent = `Ready for your next quest, ${Player.name}?`;
+  document.getElementById("dash-total-stars").textContent = Player.totalStars + " ⭐";
+  document.getElementById("dash-sessions").textContent = Player.sessionsCompleted;
+}
+
+function launchConfetti(count = 16) {
+  const emojis = ["🎉", "⭐", "✨", "🎊"];
+  for (let i = 0; i < count; i++) {
+    const piece = document.createElement("div");
+    piece.className = "confetti-piece";
+    piece.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    piece.style.left = Math.random() * 100 + "vw";
+    piece.style.animationDuration = (2 + Math.random() * 1.5) + "s";
+    piece.style.fontSize = (1 + Math.random()) + "rem";
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 4000);
+  }
+}
+
+/* =========================================================================
+   QUEST CONTROLLER — drives the 5-passage game loop
+========================================================================= */
+const Quest = {
+  order: [],            // shuffled passage indices for this session
+  currentIndex: 0,      // position within order (0-4)
+  currentSkill: "mainidea",
+  firstTry: { mainidea: false, sequence: false, details: false },
+  attemptedWrong: { mainidea: false, sequence: false, details: false },
+  results: [],          // per-passage outcome for the final summary
+
+  get currentPassage() { return PASSAGE_BANK[this.order[this.currentIndex]]; },
+
+  start() {
+    this.order = shuffle(PASSAGE_BANK.map((p, i) => i));
+    this.currentIndex = 0;
+    this.results = [];
+    this.loadPassage();
+  },
+
+  loadPassage() {
+    this.currentSkill = "mainidea";
+    this.firstTry = { mainidea: false, sequence: false, details: false };
+    this.attemptedWrong = { mainidea: false, sequence: false, details: false };
+    MainIdeaSkill.render();
+    updateProgressBar();
+    Nav.show("mainidea");
+  },
+
+  markWrongAttempt(skillKey) {
+    this.attemptedWrong[skillKey] = true;
+  },
+
+  completeSkill(skillKey) {
+    if (!this.attemptedWrong[skillKey]) this.firstTry[skillKey] = true;
+
+    if (skillKey === "mainidea") {
+      this.currentSkill = "sequence";
+      SequenceSkill.render();
+      updateProgressBar();
+      Nav.show("sequence");
+    } else if (skillKey === "sequence") {
+      this.currentSkill = "details";
+      DetailsSkill.render();
+      updateProgressBar();
+      Nav.show("details");
+    } else {
+      this.finishPassage();
+    }
+  },
+
+  finishPassage() {
+    const starsEarned = Object.values(this.firstTry).filter(Boolean).length;
+    this.results.push({ title: this.currentPassage.title, stars: starsEarned, firstTry: { ...this.firstTry } });
+    PassageCompleteScreen.render(starsEarned);
+    Nav.show("passage-complete");
+  },
+
+  nextPassage() {
+    this.currentIndex++;
+    if (this.currentIndex >= this.order.length) {
+      this.finishQuest();
+    } else {
+      this.loadPassage();
+    }
+  },
+
+  finishQuest() {
+    const totalStars = this.results.reduce((sum, r) => sum + r.stars, 0);
+    Player.addSessionStars(totalStars);
+    QuestCompleteScreen.render(totalStars);
+    Nav.show("quest-complete");
+  }
+};
+
+/* =========================================================================
+   SKILL 1: THE CORE — Main Idea (multiple choice)
+========================================================================= */
+const MainIdeaSkill = {
+  answered: false,
+
+  render() {
+    const passage = Quest.currentPassage;
+    this.answered = false;
+    TTS.stop();
+
+    document.getElementById("mi-title").textContent = passage.title;
+    renderPassageText("mi-text", passage, false);
+    document.getElementById("mi-question").textContent = passage.mainIdeaQuestion.question;
+
+    const choicesEl = document.getElementById("mi-choices");
+    choicesEl.innerHTML = "";
+    passage.mainIdeaQuestion.options.forEach((text, idx) => {
+      const btn = document.createElement("button");
+      btn.className = "choice-btn";
+      btn.id = "mi-choice-" + idx;
+      btn.textContent = text;
+      btn.onclick = () => MainIdeaSkill.select(idx);
+      choicesEl.appendChild(btn);
+    });
+
+    document.getElementById("mi-feedback").className = "feedback-panel";
+    document.getElementById("mi-retry-btn").classList.remove("show");
+    document.getElementById("mi-continue-btn").classList.remove("show");
+  },
+
+  select(idx) {
+    if (this.answered) return;
+    this.answered = true;
+
+    const q = Quest.currentPassage.mainIdeaQuestion;
+    const correct = idx === q.correctIndex;
+    const feedback = document.getElementById("mi-feedback");
+
+    q.options.forEach((opt, i) => {
+      const btn = document.getElementById("mi-choice-" + i);
+      btn.disabled = true;
+      if (i === idx) btn.classList.add(correct ? "correct-pick" : "incorrect-pick");
+    });
+
+    if (correct) {
+      feedback.textContent = "✅ That's the main idea — it captures the passage as a whole.";
+      feedback.className = "feedback-panel show correct";
+      document.getElementById("mi-continue-btn").classList.add("show");
+    } else {
+      feedback.textContent = "❌ Not quite. Re-read the passage and think about what ties every paragraph together.";
+      feedback.className = "feedback-panel show incorrect";
+      Quest.markWrongAttempt("mainidea");
+      document.getElementById("mi-retry-btn").classList.add("show");
+    }
+  },
+
+  reset() {
+    this.answered = false;
+    document.getElementById("mi-feedback").className = "feedback-panel";
+    document.getElementById("mi-retry-btn").classList.remove("show");
+    Quest.currentPassage.mainIdeaQuestion.options.forEach((opt, i) => {
+      const btn = document.getElementById("mi-choice-" + i);
+      btn.disabled = false;
+      btn.classList.remove("correct-pick", "incorrect-pick");
+    });
+  }
+};
+
+/* =========================================================================
+   SKILL 2: THE TIMELINE — Sequence (click-to-reorder)
+========================================================================= */
+const SequenceSkill = {
+  pool: [],
+  answer: [],
+
+  render() {
+    const passage = Quest.currentPassage;
+    TTS.stop();
+    document.getElementById("seq-title").textContent = passage.title;
+    renderPassageText("seq-text", passage, false);
+    document.getElementById("seq-continue-btn").classList.remove("show");
+    this.reset();
+  },
+
+  reset() {
+    const ids = Quest.currentPassage.sequenceEvents.map((t, i) => i);
+    shuffle(ids);
+    this.pool = ids;
+    this.answer = new Array(Quest.currentPassage.sequenceEvents.length).fill(null);
+    document.getElementById("seq-feedback").className = "feedback-panel";
+    this.draw();
+  },
+
+  draw() {
+    const events = Quest.currentPassage.sequenceEvents;
+    const slotsEl = document.getElementById("seq-slots");
+    slotsEl.innerHTML = "";
+    this.answer.forEach((id, i) => {
+      const slot = document.createElement("div");
+      slot.className = "seq-slot" + (id !== null ? " filled" : "");
+      const num = document.createElement("span");
+      num.className = "slot-num";
+      num.textContent = i + 1;
+      slot.appendChild(num);
+      const label = document.createElement("span");
+      label.textContent = id !== null ? events[id] : "Click an event below to place it here";
+      slot.appendChild(label);
+      if (id !== null) slot.onclick = () => SequenceSkill.removeFromAnswer(i);
+      slotsEl.appendChild(slot);
+    });
+
+    const poolEl = document.getElementById("seq-pool");
+    poolEl.innerHTML = "";
+    this.pool.filter(id => !this.answer.includes(id)).forEach(id => {
+      const chip = document.createElement("div");
+      chip.className = "pool-chip";
+      chip.textContent = events[id];
+      chip.onclick = () => SequenceSkill.addToAnswer(id);
+      poolEl.appendChild(chip);
+    });
+  },
+
+  addToAnswer(id) {
+    const emptyIdx = this.answer.indexOf(null);
+    if (emptyIdx === -1) return;
+    this.answer[emptyIdx] = id;
+    document.getElementById("seq-feedback").className = "feedback-panel";
+    this.draw();
+  },
+
+  removeFromAnswer(slotIdx) {
+    this.answer[slotIdx] = null;
+    document.getElementById("seq-feedback").className = "feedback-panel";
+    this.draw();
+  },
+
+  check() {
+    const feedback = document.getElementById("seq-feedback");
+    if (this.answer.includes(null)) {
+      feedback.textContent = "⚠️ Fill in all the slots before checking.";
+      feedback.className = "feedback-panel show info";
+      return;
+    }
+
+    let correctCount = 0;
+    const slotsEl = document.getElementById("seq-slots");
+    this.answer.forEach((id, i) => {
+      const slotEl = slotsEl.children[i];
+      slotEl.classList.remove("correct", "incorrect");
+      if (id === i) { slotEl.classList.add("correct"); correctCount++; }
+      else slotEl.classList.add("incorrect");
+    });
+
+    if (correctCount === this.answer.length) {
+      feedback.textContent = "✅ Perfect! That's the correct order of events.";
+      feedback.className = "feedback-panel show correct";
+      document.getElementById("seq-continue-btn").classList.add("show");
+    } else {
+      feedback.textContent = `You got ${correctCount} out of ${this.answer.length} in the right spot. Click a red box to remove it, then try again.`;
+      feedback.className = "feedback-panel show incorrect";
+      Quest.markWrongAttempt("sequence");
+    }
+  }
+};
+
+/* =========================================================================
+   SKILL 3: THE DETECTIVE — Details (click-the-sentence or write-a-response)
+========================================================================= */
+const DetailsSkill = {
+  solved: false,
+
+  render() {
+    const passage = Quest.currentPassage;
+    const dq = passage.detailsQuestion;
+    this.solved = false;
+    TTS.stop();
+
+    document.getElementById("det-title").textContent = passage.title;
+    renderPassageText("det-text", passage, dq.type === "click");
+
+    document.getElementById("det-question").textContent = dq.type === "click" ? dq.question : dq.prompt;
+
+    const writeWrap = document.getElementById("det-write-wrap");
+    if (dq.type === "text") {
+      writeWrap.classList.add("show");
+      document.getElementById("det-write-input").value = "";
+      this.updateCharCount();
+    } else {
+      writeWrap.classList.remove("show");
+    }
+
+    document.getElementById("det-feedback").className = "feedback-panel";
+    document.getElementById("det-finish-btn").classList.remove("show");
+  },
+
+  selectSentence(idx) {
+    if (this.solved) return;
+    const dq = Quest.currentPassage.detailsQuestion;
+    const span = document.getElementById("det-sentence-" + idx);
+    const feedback = document.getElementById("det-feedback");
+
+    if (idx === dq.targetIndex) {
+      this.solved = true;
+      span.classList.add("correct-found");
+      feedback.textContent = "✅ That's exactly the right sentence!";
+      feedback.className = "feedback-panel show correct";
+      document.getElementById("det-finish-btn").classList.add("show");
+    } else {
+      Quest.markWrongAttempt("details");
+      span.classList.add("wrong-flash");
+      setTimeout(() => span.classList.remove("wrong-flash"), 500);
+      feedback.textContent = "❌ Not that one — keep reading carefully and try another sentence.";
+      feedback.className = "feedback-panel show incorrect";
+    }
+  },
+
+  updateCharCount() {
+    const val = document.getElementById("det-write-input").value.trim();
+    const words = val ? val.split(/\s+/).length : 0;
+    document.getElementById("det-char-count").textContent = words + " word" + (words === 1 ? "" : "s");
+  },
+
+  submitText() {
+    if (this.solved) return;
+    const dq = Quest.currentPassage.detailsQuestion;
+    const val = document.getElementById("det-write-input").value.trim();
+    const wordCount = val ? val.split(/\s+/).length : 0;
+    const feedback = document.getElementById("det-feedback");
+
+    if (wordCount < dq.minWords) {
+      Quest.markWrongAttempt("details");
+      feedback.textContent = `✏️ Add a bit more detail — aim for at least ${dq.minWords} words in your answer.`;
+      feedback.className = "feedback-panel show info";
+      return;
+    }
+
+    this.solved = true;
+    feedback.textContent = "✅ Nice work — that's a thoughtful, detailed response!";
+    feedback.className = "feedback-panel show correct";
+    document.getElementById("det-finish-btn").classList.add("show");
+  }
+};
+
+/* =========================================================================
+   PASSAGE COMPLETE SCREEN
+========================================================================= */
+const PassageCompleteScreen = {
+  render(starsEarned) {
+    const passage = Quest.currentPassage;
+    document.getElementById("pc-passage-title").textContent = `"${passage.title}"`;
+    document.getElementById("pc-stars").textContent = renderStars(starsEarned, 3);
+
+    const breakdown = document.getElementById("pc-breakdown");
+    breakdown.innerHTML = "";
+    ["mainidea", "sequence", "details"].forEach(key => {
+      const row = document.createElement("div");
+      row.className = "breakdown-row";
+      const label = document.createElement("span");
+      label.textContent = SKILL_LABELS[key];
+      const result = document.createElement("span");
+      result.textContent = Quest.firstTry[key] ? "⭐ First try!" : "✓ Completed";
+      row.appendChild(label);
+      row.appendChild(result);
+      breakdown.appendChild(row);
+    });
+
+    const isLast = Quest.currentIndex + 1 >= Quest.order.length;
+    document.getElementById("pc-next-btn").textContent = isLast ? "See My Quest Results →" : "Next Passage →";
+
+    if (starsEarned === 3) launchConfetti(10);
+  }
+};
+
+/* =========================================================================
+   QUEST COMPLETE SCREEN
+========================================================================= */
+const QuestCompleteScreen = {
+  render(totalStars) {
+    document.getElementById("qc-session-stars").textContent =
+      `You earned ${totalStars} out of ${Quest.results.length * 3} stars this session!`;
+
+    const breakdown = document.getElementById("qc-breakdown");
+    breakdown.innerHTML = "";
+    Quest.results.forEach((r, i) => {
+      const row = document.createElement("div");
+      row.className = "breakdown-row";
+      const label = document.createElement("span");
+      label.textContent = `${i + 1}. ${r.title}`;
+      const stars = document.createElement("span");
+      stars.textContent = renderStars(r.stars, 3);
+      row.appendChild(label);
+      row.appendChild(stars);
+      breakdown.appendChild(row);
+    });
+
+    document.getElementById("qc-lifetime-stars").textContent = Player.totalStars + " ⭐";
+    document.getElementById("qc-sessions").textContent = Player.sessionsCompleted;
+
+    launchConfetti(28);
+  }
+};
+</script>
+
+</body>
+</html>
