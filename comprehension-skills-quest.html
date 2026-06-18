@@ -165,6 +165,66 @@
 
   .confetti-piece{position:fixed; top:-10px; font-size:1.4rem; pointer-events:none; z-index:999; animation:fall linear forwards;}
   @keyframes fall{to{transform:translateY(105vh) rotate(360deg); opacity:0.3;}}
+
+  /* ============ MASCOT ============ */
+  #mascot-wrap{
+    position:fixed; bottom:18px; right:18px; z-index:900;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    pointer-events:none;
+  }
+  #mascot-bubble{
+    background:#ffffff; border:2px solid var(--purple); border-radius:14px;
+    padding:8px 13px; font-size:.82rem; font-weight:700; color:var(--purple-dark);
+    box-shadow:var(--shadow-md); max-width:160px; text-align:center;
+    opacity:0; transform:translateY(6px) scale(.92);
+    transition:opacity .25s ease, transform .25s ease;
+    position:relative;
+  }
+  #mascot-bubble::after{
+    content:''; position:absolute; bottom:-9px; left:50%; transform:translateX(-50%);
+    border:5px solid transparent; border-top-color:var(--purple);
+  }
+  #mascot-bubble.show{ opacity:1; transform:translateY(0) scale(1); }
+
+  #mascot-img{
+    width:100px; height:100px; object-fit:contain;
+    border-radius:50%;
+    filter:drop-shadow(0 6px 14px rgba(91,51,214,.45));
+    transition:transform .2s ease;
+    pointer-events:none; display:block;
+  }
+  #mascot-img[src=""],#mascot-img:not([src]){display:none;}
+
+  #mascot-emoji{
+    font-size:3rem; line-height:1;
+    filter:drop-shadow(0 4px 8px rgba(124,58,237,.3));
+    transition:transform .2s ease;
+  }
+  @keyframes mascot-bounce{
+    0%,100%{transform:translateY(0) scale(1);}
+    25%{transform:translateY(-12px) scale(1.08);}
+    50%{transform:translateY(-6px) scale(1.04);}
+    75%{transform:translateY(-10px) scale(1.06);}
+  }
+  @keyframes mascot-shake{
+    0%,100%{transform:translateX(0) rotate(0deg);}
+    20%{transform:translateX(-6px) rotate(-4deg);}
+    40%{transform:translateX(6px) rotate(4deg);}
+    60%{transform:translateX(-4px) rotate(-2deg);}
+    80%{transform:translateX(4px) rotate(2deg);}
+  }
+  .mascot-celebrate{ animation:mascot-bounce .7s ease forwards !important; }
+  .mascot-tryagain{ animation:mascot-shake .5s ease forwards !important; }
+
+  /* ============ READ PASSAGE AGAIN BUTTON ============ */
+  .read-again-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--purple-light); border:1px solid var(--purple);
+    color:var(--purple-dark); border-radius:999px;
+    padding:6px 14px; font-size:.8rem; font-weight:700;
+    cursor:pointer; margin-bottom:4px; transition:.18s;
+  }
+  .read-again-btn:hover{ background:var(--purple); color:white; }
 </style>
 </head>
 <body>
@@ -234,7 +294,8 @@
         <div id="mi-text"></div>
       </div>
       <div class="card">
-        <p style="font-weight:700; margin-top:0; margin-bottom:14px; color:#581c87;" id="mi-question"></p>
+        <p style="font-weight:700; margin-top:0; margin-bottom:6px; color:#581c87;" id="mi-question"></p>
+        <button class="read-again-btn" onclick="Nav._scrollToPassage('mi-text')">📖 Read Passage Again</button>
         <div id="mi-choices"></div>
         <div class="feedback-panel" id="mi-feedback"></div>
         <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
@@ -256,7 +317,8 @@
         <div id="seq-text"></div>
       </div>
       <div class="card">
-        <p style="font-weight:700; color:var(--text-secondary); font-size:.86rem; margin-top:0;">Click the events below in the order they happened. Click a filled slot to undo it.</p>
+        <p style="font-weight:700; color:var(--text-secondary); font-size:.86rem; margin-top:0; margin-bottom:6px;">Click the events below in the order they happened. Click a filled slot to undo it.</p>
+        <button class="read-again-btn" onclick="Nav._scrollToPassage('seq-text')">📖 Read Passage Again</button>
         <div class="seq-slots" id="seq-slots"></div>
         <div class="pool-label">Mixed-up events:</div>
         <div class="pool-area" id="seq-pool"></div>
@@ -285,6 +347,7 @@
           <strong>Your Mission</strong>
           <span id="det-question"></span>
         </div>
+        <button class="read-again-btn" onclick="Nav._scrollToPassage('det-text')">📖 Read Passage Again</button>
 
         <div class="write-box hidden-btn" id="det-write-wrap">
           <label>✍️ Write your answer:</label>
@@ -337,6 +400,13 @@
     </section>
 
   </main>
+</div>
+
+<!-- ===================== MASCOT ===================== -->
+<div id="mascot-wrap">
+  <div id="mascot-bubble"></div>
+  <img id="mascot-img" src="mascot.png" alt="Possum mascot in purple hoodie">
+  <div id="mascot-emoji" style="display:none;">🦉</div>
 </div>
 
 <script>
@@ -662,40 +732,117 @@ const Toast = {
 };
 
 /* =========================================================================
-   TEXT-TO-SPEECH ("Read to Me")
+   TEXT-TO-SPEECH — natural voice picker
+   Priority: Google/Microsoft neural voices > Apple Samantha > any en-US > fallback
 ========================================================================= */
 const TTS = {
   activeBtnId: null,
+  _voice: null,
+  _voiceReady: false,
+
+  // Pick the best available English voice once voices load
+  _pickVoice() {
+    const voices = speechSynthesis.getVoices();
+    if (!voices.length) return;
+    const priority = [
+      v => /google us english/i.test(v.name),
+      v => /microsoft (aria|jenny|guy|zira)/i.test(v.name),
+      v => /samantha/i.test(v.name),
+      v => v.lang === 'en-US' && v.localService,
+      v => v.lang.startsWith('en') && v.localService,
+      v => v.lang.startsWith('en'),
+    ];
+    for (const test of priority) {
+      const match = voices.find(test);
+      if (match) { this._voice = match; break; }
+    }
+    this._voiceReady = true;
+  },
+
+  init() {
+    if (!("speechSynthesis" in window)) return;
+    if (speechSynthesis.getVoices().length) { this._pickVoice(); }
+    speechSynthesis.onvoiceschanged = () => this._pickVoice();
+  },
+
   toggle(text, btnId) {
     if (!("speechSynthesis" in window)) {
       Toast.show("Read-aloud isn't supported in this browser.");
       return;
     }
     if (this.activeBtnId === btnId && speechSynthesis.speaking) {
-      this.stop();
-      return;
+      this.stop(); return;
     }
     this.stop();
     const utter = new SpeechSynthesisUtterance(text);
-    utter.rate = 0.95;
-    utter.onend = () => this.clearActive();
+    utter.rate  = 0.92;
+    utter.pitch = 1.0;
+    if (this._voice) utter.voice = this._voice;
+    utter.onend   = () => this.clearActive();
     utter.onerror = () => this.clearActive();
     this.activeBtnId = btnId;
     const btn = document.getElementById(btnId);
-    btn.classList.add("speaking");
-    btn.innerHTML = "⏸ Stop Reading";
+    if (btn) { btn.classList.add("speaking"); btn.innerHTML = "⏸ Stop Reading"; }
     speechSynthesis.speak(utter);
   },
+
   stop() {
     if ("speechSynthesis" in window) speechSynthesis.cancel();
     this.clearActive();
   },
+
   clearActive() {
     if (this.activeBtnId) {
       const btn = document.getElementById(this.activeBtnId);
       if (btn) { btn.classList.remove("speaking"); btn.innerHTML = "🔊 Read to Me"; }
     }
     this.activeBtnId = null;
+  }
+};
+
+/* =========================================================================
+   MASCOT — celebrates correct answers, encourages retries on wrong ones
+========================================================================= */
+const Mascot = {
+  _timer: null,
+
+  _el() { return document.getElementById("mascot-img").src ? document.getElementById("mascot-img") : document.getElementById("mascot-emoji"); },
+
+  _say(msg, durationMs = 3000) {
+    const bubble = document.getElementById("mascot-bubble");
+    bubble.textContent = msg;
+    bubble.classList.add("show");
+    clearTimeout(this._timer);
+    this._timer = setTimeout(() => bubble.classList.remove("show"), durationMs);
+  },
+
+  _animate(cls) {
+    const el = this._el();
+    el.classList.remove("mascot-celebrate", "mascot-tryagain");
+    // force reflow so animation restarts even if same class
+    void el.offsetWidth;
+    el.classList.add(cls);
+    setTimeout(() => el.classList.remove(cls), 800);
+  },
+
+  celebrate(message) {
+    this._animate("mascot-celebrate");
+    this._say(message || "🎉 Great job!", 3000);
+  },
+
+  tryAgain(message) {
+    this._animate("mascot-tryagain");
+    this._say(message || "💪 Try again!", 3500);
+  },
+
+  // Replace the emoji placeholder with a real image once you have one.
+  // Call Mascot.setImage('path/to/your-mascot.png') from the console or on load.
+  setImage(src) {
+    const img = document.getElementById("mascot-img");
+    const emoji = document.getElementById("mascot-emoji");
+    img.src = src;
+    img.style.display = "block";
+    emoji.style.display = "none";
   }
 };
 
@@ -711,8 +858,17 @@ const Nav = {
       ["mainidea", "sequence", "details"].includes(viewName)
     );
     window.scrollTo({ top: 0, behavior: "smooth" });
+  },
+
+  // Smoothly scroll the passage text container into view
+  _scrollToPassage(elId) {
+    const el = document.getElementById(elId);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 };
+
+// Init natural voice picking as early as possible
+TTS.init();
 
 function updateProgressBar() {
   const total = Quest.order.length;
@@ -901,11 +1057,13 @@ const MainIdeaSkill = {
       feedback.textContent = "✅ That's the main idea — it captures the passage as a whole.";
       feedback.className = "feedback-panel show correct";
       document.getElementById("mi-continue-btn").classList.add("show");
+      Mascot.celebrate("⭐ That's it!");
     } else {
       feedback.textContent = "❌ Not quite. Re-read the passage and think about what ties every paragraph together.";
       feedback.className = "feedback-panel show incorrect";
       Quest.markWrongAttempt("mainidea");
       document.getElementById("mi-retry-btn").classList.add("show");
+      Mascot.tryAgain("💪 Try again!");
     }
   },
 
@@ -1010,10 +1168,12 @@ const SequenceSkill = {
       feedback.textContent = "✅ Perfect! That's the correct order of events.";
       feedback.className = "feedback-panel show correct";
       document.getElementById("seq-continue-btn").classList.add("show");
+      Mascot.celebrate("🎉 Perfect order!");
     } else {
       feedback.textContent = `You got ${correctCount} out of ${this.answer.length} in the right spot. Click a red box to remove it, then try again.`;
       feedback.className = "feedback-panel show incorrect";
       Quest.markWrongAttempt("sequence");
+      Mascot.tryAgain("🔄 Keep trying!");
     }
   }
 };
@@ -1060,12 +1220,14 @@ const DetailsSkill = {
       feedback.textContent = "✅ That's exactly the right sentence!";
       feedback.className = "feedback-panel show correct";
       document.getElementById("det-finish-btn").classList.add("show");
+      Mascot.celebrate("🔍 Nice find!");
     } else {
       Quest.markWrongAttempt("details");
       span.classList.add("wrong-flash");
       setTimeout(() => span.classList.remove("wrong-flash"), 500);
       feedback.textContent = "❌ Not that one — keep reading carefully and try another sentence.";
       feedback.className = "feedback-panel show incorrect";
+      Mascot.tryAgain("🤔 Look closer!");
     }
   },
 
@@ -1086,6 +1248,7 @@ const DetailsSkill = {
       Quest.markWrongAttempt("details");
       feedback.textContent = `✏️ Add a bit more detail — aim for at least ${dq.minWords} words in your answer.`;
       feedback.className = "feedback-panel show info";
+      Mascot.tryAgain("✏️ Say more!");
       return;
     }
 
@@ -1093,6 +1256,7 @@ const DetailsSkill = {
     feedback.textContent = "✅ Nice work — that's a thoughtful, detailed response!";
     feedback.className = "feedback-panel show correct";
     document.getElementById("det-finish-btn").classList.add("show");
+    Mascot.celebrate("✍️ Well said!");
   }
 };
 
