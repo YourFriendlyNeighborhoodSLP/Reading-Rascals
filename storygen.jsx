@@ -16,6 +16,32 @@ function sample(arr, k){
 }
 // shuffle a copy
 function shuffled(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=rnd(i+1); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+// ---------- no-repeat picker ("shuffle bag") ----------
+// Guarantees every item in a pool gets used once before any item repeats, and
+// avoids picking the same item twice back-to-back even across a reshuffle.
+// This is what stops "regenerate" from handing back the same hero, setting,
+// or — most importantly — the same story episode/subject right after it was
+// just used. State lives for the page session (resets on reload).
+const SG_BAGS = {};
+function pickNoRepeat(bagKey, arr){
+  if(!arr || arr.length===0) return undefined;
+  if(arr.length===1) return arr[0];
+  let bag = SG_BAGS[bagKey];
+  if(!bag){ bag = SG_BAGS[bagKey] = { queue:[], lastIdx:null }; }
+  if(bag.queue.length===0){
+    let order = shuffled(arr.map((_,i)=>i));
+    // don't let the very next pick equal the one we just served
+    if(bag.lastIdx!=null && order[0]===bag.lastIdx){
+      const swapWith = 1 + rnd(order.length-1);
+      [order[0], order[swapWith]] = [order[swapWith], order[0]];
+    }
+    bag.queue = order;
+  }
+  const idx = bag.queue.shift();
+  bag.lastIdx = idx;
+  return arr[idx];
+}
 // distinct distractors that differ from `correct`
 function distractorsFrom(pool, correct, k){
   const seen = new Set([String(correct).toLowerCase()]);
@@ -68,10 +94,10 @@ const SG_WRONG_THEME = [
 function buildFiction(grade, topicId){
   const band = gradeBand(grade);
   const pack = (window.FICTION_PACKS||{})[topicId] || (window.FICTION_PACKS||{}).animals;
-  const hero    = choice(pack.heroes);
-  const trait   = choice(SG_TRAITS);
-  const setting = choice(pack.settings);
-  const ep      = choice(pack.episodes);
+  const hero    = pickNoRepeat('hero:'+topicId, pack.heroes);
+  const trait   = pickNoRepeat('trait', SG_TRAITS);
+  const setting = pickNoRepeat('setting:'+topicId, pack.settings);
+  const ep      = pickNoRepeat('episode:'+topicId, pack.episodes);
   const feeling = ep.feeling || choice(SG_FEELINGS);
   const Name = hero.name;
 
@@ -106,7 +132,7 @@ function buildFiction(grade, topicId){
     ];
   }
 
-  const title = fill(choice(ep.titles || [`${Name}'s Big Day`]));
+  const title = fill(pickNoRepeat('title:'+topicId+':'+(ep.titles||[])[0], ep.titles || [`${Name}'s Big Day`]));
   const meta = { genre:'fiction', band, hero, trait, setting, ep, feeling, vocab:(band==='upper'?ep.vocab:null) };
   return { title, paragraphs, meta };
 }
@@ -155,7 +181,7 @@ function buildFictionComp(meta, plan){
 function buildNonfiction(grade, topicId){
   const band = gradeBand(grade);
   const pack = (window.NONFICTION_PACKS||{})[topicId] || (window.NONFICTION_PACKS||{}).animals;
-  const subj = choice(pack.subjects);
+  const subj = pickNoRepeat('subject:'+topicId, pack.subjects);
   const nFacts = band==='early' ? 4 : band==='mid' ? 5 : 6;
 
   // always include questionable facts first so comprehension has material
@@ -187,7 +213,7 @@ function buildNonfiction(grade, topicId){
     if(subj.closer) paragraphs.push(subj.closer);
   }
 
-  const title = choice(subj.titles || [subj.label]);
+  const title = pickNoRepeat('title:'+topicId+':'+(subj.titles||[subj.label])[0], subj.titles || [subj.label]);
   const meta = { genre:'nonfiction', band, subj, usedQ:usedQ.filter(f=>f.q) };
   return { title, paragraphs, meta };
 }
@@ -347,4 +373,5 @@ function offlineGenerateActivity({ grade, type, topic, questionMode, phonSource 
   };
 }
 
-Object.assign(window, { offlineGenerateActivity, buildFiction, buildNonfiction, buildPhonemic });
+Object.assign(window, { offlineGenerateActivity, buildFiction, buildNonfi
+
