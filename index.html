@@ -1,494 +1,202 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Your Friendly Neighborhood SLP · Tool Hub</title>
+<title>Reading Rascals</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,600&display=swap" rel="stylesheet" />
 <style>
-  :root {
+  :root{
+    /* purples & pinks */
     --lav-bg:#F2ECFF;
+    --lav-2:#E7DBFF;
+    --lav-3:#D9C9FF;
     --purple:#7C5CFC;
     --purple-deep:#5B33D6;
     --purple-ink:#3C2A6E;
     --pink:#FF5BA0;
     --pink-deep:#F0388A;
     --pink-soft:#FFD6EC;
+    --pink-soft-2:#FFE9F4;
     --gold:#FFC23D;
     --gold-deep:#F1A21B;
     --mint:#5AD6B0;
     --sky:#54C7F2;
     --ink:#3A2D5F;
     --ink-soft:#6F5E97;
+    /* fixed light tones for headings that sit directly on the dark cosmic bg */
+    --head-on-bg:#F4ECFF;
+    --head-on-bg-soft:rgba(236,224,255,.72);
     --white:#FFFFFF;
+    --card:#FFFFFF;
     --ok:#36C28B;
+    --ok-deep:#1FA873;
+
+    --r-lg:30px;
+    --r-md:22px;
+    --r-sm:16px;
+    --shadow-card:0 18px 40px -18px rgba(91,51,214,.45);
+    --shadow-btn:0 8px 0 0 var(--pink-deep);
+    --shadow-btn-purple:0 8px 0 0 var(--purple-deep);
+    --shadow-soft:0 10px 30px -12px rgba(91,51,214,.4);
+
+    --font-display:'Fredoka', system-ui, sans-serif;
+    --font-body:'Nunito', system-ui, sans-serif;
+
+    /* themeable background (driven by Tweaks) — dark cosmic, sampled from the mascot badge */
     --bg-base:#1C1046;
     --bg-glow-1:#C42E96;
     --bg-glow-2:#7A3AE6;
     --bg-glow-3:#3A2270;
-    --font-display:'Fredoka', system-ui, sans-serif;
-    --font-body:'Nunito', system-ui, sans-serif;
-    --r-lg:30px;
-    --r-md:22px;
-    --shadow-card:0 18px 40px -18px rgba(91,51,214,.45);
   }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
-
-  body {
-    font-family: var(--font-body);
-    color: var(--ink);
-    min-height: 100vh;
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; height:100%; }
+  body{
+    font-family:var(--font-body);
+    color:var(--ink);
     background:
-      radial-gradient(ellipse 70% 55% at 18% 20%, rgba(196,46,150,.38) 0%, transparent 65%),
-      radial-gradient(ellipse 55% 50% at 82% 15%, rgba(122,58,230,.45) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 60% at 50% 90%, rgba(58,34,112,.6) 0%, transparent 70%),
+      radial-gradient(820px 560px at 14% 4%, var(--bg-glow-1) 0%, transparent 46%),
+      radial-gradient(900px 680px at 96% 98%, var(--bg-glow-2) 0%, transparent 48%),
+      radial-gradient(1300px 950px at 50% 32%, var(--bg-glow-3) 0%, var(--bg-base) 70%),
       var(--bg-base);
+    background-attachment:fixed;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  #root{ min-height:100%; }
+
+  h1,h2,h3,.display{ font-family:var(--font-display); font-weight:600; letter-spacing:.2px; }
+
+  /* floating soft blobs */
+  .bg-decor{ position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+  .blob{ position:absolute; border-radius:50%; filter:blur(2px); opacity:.5; }
+
+  button{ font-family:var(--font-display); cursor:pointer; border:none; }
+
+  /* scrollbar */
+  *::-webkit-scrollbar{ width:12px; height:12px; }
+  *::-webkit-scrollbar-thumb{ background:var(--lav-3); border-radius:20px; border:3px solid transparent; background-clip:content-box; }
+  *::-webkit-scrollbar-track{ background:transparent; }
+
+  /* shared animation helpers */
+  @keyframes pop-in{ 0%{ transform:scale(.6); opacity:0; } 70%{ transform:scale(1.06); } 100%{ transform:scale(1); opacity:1; } }
+  @keyframes float-y{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
+  @keyframes wiggle{ 0%,100%{ transform:rotate(-3deg); } 50%{ transform:rotate(3deg); } }
+  @keyframes bob{ 0%,100%{ transform:translateY(0) rotate(0); } 50%{ transform:translateY(-6px) rotate(-1.5deg); } }
+  @keyframes rise{ from{ transform:translateY(22px); opacity:0; } to{ transform:translateY(0); opacity:1; } }
+  @keyframes sheen{ to{ background-position:200% center; } }
+  @keyframes confetti-fall{ to{ transform:translateY(105vh) rotate(720deg); opacity:1; } }
+  @keyframes star-pop{ 0%{ transform:scale(0) rotate(-40deg); } 60%{ transform:scale(1.25) rotate(8deg); } 100%{ transform:scale(1) rotate(0); } }
+  @keyframes pulse-ring{ 0%{ box-shadow:0 0 0 0 rgba(255,91,160,.45); } 100%{ box-shadow:0 0 0 22px rgba(255,91,160,0); } }
+  @keyframes twinkle{ 0%,100%{ opacity:.35; transform:scale(.8); } 50%{ opacity:1; transform:scale(1.15); } }
+  @keyframes remy-wave{ 0%,100%{ transform:rotate(-8deg); } 50%{ transform:rotate(22deg); } }
+  @keyframes remy-waggle{ 0%,100%{ transform:rotate(-3deg); } 50%{ transform:rotate(3deg); } }
+  @keyframes bubble-in{ 0%{ opacity:0; transform:translateY(10px) scale(.92); } 100%{ opacity:1; transform:translateY(0) scale(1); } }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; }
   }
 
-  /* ── STARS ── */
-  .stars {
-    position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0;
-  }
-  .star {
-    position: absolute;
-    border-radius: 50%;
-    background: white;
-    animation: twinkle var(--d, 3s) ease-in-out infinite var(--delay, 0s);
-    opacity: 0;
-  }
-  @keyframes twinkle {
-    0%, 100% { opacity: 0; transform: scale(.7); }
-    50%       { opacity: var(--op, .7); transform: scale(1); }
-  }
+  /* ===== sentence highlight during narration ===== */
+  .narr-sentence{ transition:background .2s, color .2s; border-radius:6px; padding:1px 2px; }
+  .narr-active{ background:linear-gradient(transparent 55%, #FFE07A 55%); box-shadow:0 0 0 3px #FFE07A; color:var(--purple-ink); }
 
-  /* ── HEADER ── */
-  header {
-    position: relative; z-index: 1;
-    text-align: center;
-    padding: 56px 24px 36px;
+  /* ===== printable worksheet ===== */
+  .print-area{ display:none; }
+  .ws-doc{ font-family:Georgia,'Times New Roman',serif; color:#1a1a1a; }
+  .ws-page{ page-break-after:always; position:relative; }
+  /* faint brand watermark in the lower-right corner of every printed page */
+  .ws-watermark{
+    position:absolute; bottom:46px; right:0; transform:none;
+    width:130px; max-width:130px; height:auto; opacity:0.10; z-index:0; pointer-events:none;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
   }
+  .ws-page > *:not(.ws-watermark){ position:relative; z-index:1; }
+  /* small brand mark in the page footer */
+  .ws-footmark{ width:30px; height:30px; border-radius:50%; vertical-align:middle; margin-right:6px;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .ws-page:last-child{ page-break-after:auto; }
+  .ws-head{ display:flex; justify-content:space-between; align-items:baseline; border-bottom:3px solid #6E45EE; padding-bottom:8px; margin-bottom:12px; }
+  .ws-brand{ font-family:'Fredoka',sans-serif; font-weight:700; font-size:16px; color:#5B33D6; white-space:nowrap; }
+  .ws-meta{ font-size:12px; color:#555; font-family:'Nunito',sans-serif; }
+  .ws-namerow{ display:flex; justify-content:space-between; font-size:13px; margin-bottom:14px; font-family:'Nunito',sans-serif; }
+  .ws-title{ font-size:24px; margin:6px 0 10px; font-family:'Fredoka',sans-serif; color:#000; }
+  .ws-passage p{ font-size:14px; line-height:1.7; margin:0 0 10px; }
+  .ws-sec{ font-family:'Fredoka',sans-serif; font-size:17px; color:#5B33D6; border-left:5px solid #FF5BA0; padding-left:8px; margin:18px 0 8px; }
+  .ws-list{ margin:0; padding-left:22px; }
+  .ws-q{ margin-bottom:12px; break-inside:avoid; }
+  .ws-qtext{ font-size:14px; font-weight:bold; font-family:'Nunito',sans-serif; }
+  .ws-choices{ margin-top:5px; }
+  .ws-choice{ font-size:13px; font-family:'Nunito',sans-serif; margin:3px 0; display:flex; align-items:center; gap:8px; }
+  .ws-bub{ display:inline-grid; place-items:center; width:18px; height:18px; border:1.5px solid #6E45EE; border-radius:50%; font-size:11px; flex-shrink:0; }
+  .ws-lines span{ display:block; border-bottom:1px solid #999; height:20px; margin-top:6px; }
+  .ws-answerline{ margin-top:6px; font-size:13px; font-family:'Nunito',sans-serif; color:#333; }
+  .ws-ans{ font-size:13px; color:#1a7f4f; font-weight:bold; font-family:'Nunito',sans-serif; margin-top:3px; }
+  .ws-cue{ font-size:12px; color:#555; font-style:italic; font-family:'Nunito',sans-serif; }
+  .ws-foot{ margin-top:20px; padding-top:8px; border-top:1px solid #ccc; font-size:10px; color:#888; text-align:center; font-family:'Nunito',sans-serif; }
 
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(255,255,255,.08);
-    border: 1px solid rgba(255,255,255,.18);
-    border-radius: 50px;
-    padding: 6px 18px 6px 10px;
-    margin-bottom: 24px;
-    backdrop-filter: blur(8px);
+  @media print {
+    @page{ margin:14mm; }
+    html, body{ background:#fff !important; }
+    body *{ visibility:hidden; }
+    .print-area, .print-area *{ visibility:visible; }
+    .print-area{ display:block !important; position:absolute; left:0; top:0; width:100%; }
+    .no-print{ display:none !important; }
+    .ws-watermark{ opacity:0.12 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   }
-  .badge-dot {
-    width: 10px; height: 10px; border-radius: 50%;
-    background: var(--ok);
-    box-shadow: 0 0 8px var(--ok);
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%,100% { box-shadow: 0 0 6px var(--ok); }
-    50%      { box-shadow: 0 0 14px var(--ok); }
-  }
-  .badge span {
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 700;
-    color: rgba(255,255,255,.85);
-    letter-spacing: .04em;
-    text-transform: uppercase;
-  }
-
-  h1 {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 6vw, 3.6rem);
-    font-weight: 700;
-    color: #F4ECFF;
-    line-height: 1.15;
-    margin-bottom: 12px;
-  }
-  h1 em {
-    font-style: normal;
-    background: linear-gradient(90deg, var(--pink) 0%, var(--purple) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .tagline {
-    font-family: var(--font-body);
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: rgba(236,224,255,.72);
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  /* ── GRID ── */
-  main {
-    position: relative; z-index: 1;
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 12px 24px 80px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 24px;
-  }
-
-  /* ── CARDS ── */
-  .card {
-    background: var(--white);
-    border-radius: var(--r-lg);
-    padding: 32px 28px 28px;
-    box-shadow: var(--shadow-card);
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    text-decoration: none;
-    color: inherit;
-    transition: transform .18s ease, box-shadow .18s ease;
-    position: relative;
-    overflow: hidden;
-  }
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 5px;
-    background: var(--accent, var(--purple));
-    border-radius: var(--r-lg) var(--r-lg) 0 0;
-  }
-  .card:hover {
-    transform: translateY(-5px) scale(1.01);
-    box-shadow: 0 28px 50px -18px rgba(91,51,214,.5);
-  }
-
-  .card-icon {
-    font-size: 2.4rem;
-    line-height: 1;
-  }
-
-  .card-title {
-    font-family: var(--font-display);
-    font-size: 1.35rem;
-    font-weight: 700;
-    color: var(--purple-ink);
-    line-height: 1.2;
-  }
-
-  .card-desc {
-    font-size: .92rem;
-    font-weight: 600;
-    color: var(--ink-soft);
-    line-height: 1.5;
-    flex: 1;
-  }
-
-  .card-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--font-display);
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--white);
-    background: var(--accent, var(--purple));
-    border-radius: 50px;
-    padding: 9px 20px;
-    margin-top: 4px;
-    align-self: flex-start;
-    transition: filter .15s;
-  }
-  .card:hover .card-cta { filter: brightness(1.1); }
-  .card-cta svg { width: 14px; height: 14px; fill: currentColor; }
-
-  /* ── COMING SOON ── */
-  .card.soon {
-    opacity: .72;
-    pointer-events: none;
-  }
-  .soon-pill {
-    position: absolute;
-    top: 18px; right: 18px;
-    background: var(--gold);
-    color: var(--purple-ink);
-    font-family: var(--font-body);
-    font-size: .72rem;
-    font-weight: 800;
-    padding: 3px 10px;
-    border-radius: 50px;
-    text-transform: uppercase;
-    letter-spacing: .06em;
-  }
-
-  /* ── MEET THE TEAM ── */
-  .team-section {
-    position: relative; z-index: 1;
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 0 24px 20px;
-    text-align: center;
-  }
-  .team-heading {
-    font-family: var(--font-display);
-    font-size: clamp(1.4rem, 4vw, 2rem);
-    font-weight: 700;
-    color: #F4ECFF;
-    margin-bottom: 6px;
-  }
-  .team-sub {
-    font-family: var(--font-body);
-    font-size: .92rem;
-    font-weight: 600;
-    color: rgba(236,224,255,.55);
-    margin-bottom: 36px;
-    letter-spacing: .04em;
-  }
-  .team-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 36px 24px;
-    max-width: 720px;
-    margin: 0 auto;
-  }
-  @media (max-width: 640px) {
-    .team-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 400px) {
-    .team-grid { grid-template-columns: 1fr; }
-  }
-  .team-member {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    cursor: default;
-  }
-  .team-avatar {
-    width: 110px; height: 110px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid rgba(255,255,255,.18);
-    box-shadow: 0 0 0 4px rgba(124,58,237,.35), 0 14px 30px -8px rgba(91,51,214,.6);
-    transition: transform .22s ease, box-shadow .22s ease;
-  }
-  .team-member:hover .team-avatar {
-    transform: translateY(-6px) scale(1.06);
-    box-shadow: 0 0 0 4px var(--pink), 0 20px 40px -10px rgba(91,51,214,.7);
-  }
-  .team-name {
-    font-family: var(--font-display);
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #F4ECFF;
-  }
-  .team-role {
-    font-family: var(--font-body);
-    font-size: .72rem;
-    font-weight: 700;
-    color: var(--pink);
-    text-transform: uppercase;
-    letter-spacing: .07em;
-    margin-top: -6px;
-  }
-  .team-bio {
-    font-family: var(--font-body);
-    font-size: .78rem;
-    font-weight: 600;
-    color: rgba(236,224,255,.6);
-    line-height: 1.45;
-    text-align: center;
-  }
-
-  .team-divider {
-    position: relative; z-index: 1;
-    max-width: 600px;
-    margin: 10px auto 48px;
-    border: none;
-    border-top: 1px solid rgba(255,255,255,.1);
-  }
-
-  /* ── FOOTER ── */
-  footer {
-    position: relative; z-index: 1;
-    text-align: center;
-    padding-bottom: 40px;
-    font-family: var(--font-body);
-    font-size: .85rem;
-    font-weight: 600;
-    color: rgba(236,224,255,.45);
-  }
-  footer span { color: var(--pink); }
 </style>
 </head>
 <body>
+  <div class="bg-decor no-print" id="bg-decor"></div>
+  <div id="root"></div>
+  <div id="tweaks-root" class="no-print"></div>
 
-<!-- Starfield -->
-<div class="stars" id="stars"></div>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
-<header>
-  <div class="badge">
-    <div class="badge-dot"></div>
-    <span>SLP Tools · Live</span>
-  </div>
-  <h1>Your Friendly<br><em>Neighborhood SLP</em></h1>
-  <p class="tagline">Communication · Connection · Confidence</p>
-</header>
+  <script>
+    // cosmic star field — twinkling sparkles across the whole app
+    (function(){
+      const wrap = document.getElementById('bg-decor');
+      const cols = ['#FFFFFF','#FF9BCB','#FFD36B','#C9A8FF'];
+      const STAR = (c,s)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" style="display:block;color:${c};filter:drop-shadow(0 0 6px ${c})"><path d="M12 0 C13 8 16 11 24 12 C16 13 13 16 12 24 C11 16 8 13 0 12 C8 11 11 8 12 0 Z" fill="${c}"/></svg>`;
+      for(let i=0;i<40;i++){
+        const c=cols[i%cols.length];
+        const s=(6+Math.random()*11).toFixed(1);
+        const star=document.createElement('div');
+        star.innerHTML=STAR(c,s);
+        const el=star.firstChild;
+        el.style.position='absolute';
+        el.style.left=(Math.random()*100).toFixed(1)+'%';
+        el.style.top=(Math.random()*100).toFixed(1)+'%';
+        el.style.animation='twinkle '+(2.6+Math.random()*2.6).toFixed(1)+'s ease-in-out '+(-Math.random()*4).toFixed(1)+'s infinite';
+        wrap.appendChild(el);
+      }
+    })();
+  </script>
 
-<main>
-
-  <!-- Reading Rascals -->
-  <a class="card" href="https://yourfriendlyneighborhoodslp.github.io/Reading-Rascals/"
-     style="--accent: var(--purple);">
-    <div class="card-icon">📖</div>
-    <div class="card-title">Reading Rascals</div>
-    <div class="card-desc">AI-powered reading stories with comprehension questions, phonics, and vocab — generated fresh every time.</div>
-    <div class="card-cta">
-      Open
-      <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-    </div>
-  </a>
-
-  <!-- Comprehension Skills Quest -->
-  <a class="card" href="https://yourfriendlyneighborhoodslp.github.io/Reading-Rascals/comprehension-skills-quest.html"
-     style="--accent: var(--pink);">
-    <div class="card-icon">🎯</div>
-    <div class="card-title">Comprehension Skills Quest</div>
-    <div class="card-desc">Targeted comprehension practice across seven key skills — main idea, inference, sequencing, and more.</div>
-    <div class="card-cta">
-      Open
-      <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-    </div>
-  </a>
-
-  <!-- Placeholder: Structured Literacy — update href when ready -->
-  <a class="card" href="#" style="--accent: var(--mint);">
-    <div class="card-icon">🔤</div>
-    <div class="card-title">Structured Literacy Program</div>
-    <div class="card-desc">Phonics, syllabication, and structured literacy activities built for every grade and skill level.</div>
-    <div class="card-cta">
-      Open
-      <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-    </div>
-  </a>
-
-  <!-- Placeholder: Pragmatic Language — update href when ready -->
-  <a class="card soon" href="#" style="--accent: var(--sky);">
-    <div class="soon-pill">Coming Soon</div>
-    <div class="card-icon">💬</div>
-    <div class="card-title">Pragmatic Language</div>
-    <div class="card-desc">Social scenarios and perspective-taking activities for real-world communication skills.</div>
-    <div class="card-cta" aria-hidden="true">
-      Open
-      <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-    </div>
-  </a>
-
-  <!-- Placeholder: Vocabulary Builder — update href when ready -->
-  <a class="card soon" href="#" style="--accent: var(--gold);">
-    <div class="soon-pill">Coming Soon</div>
-    <div class="card-icon">🧠</div>
-    <div class="card-title">Vocabulary Builder</div>
-    <div class="card-desc">Word relationships, connotation, and academic vocabulary — aligned to CCSS standards.</div>
-    <div class="card-cta" aria-hidden="true">
-      Open
-      <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-    </div>
-  </a>
-
-</main>
-
-<hr class="team-divider">
-
-<!-- ── MEET THE TEAM ── -->
-<section class="team-section">
-  <h2 class="team-heading">Meet the Team 🐾</h2>
-  <p class="team-sub">Your friendly neighborhood adventurers, ready to guide every lesson</p>
-
-  <div class="team-grid">
-
-    <div class="team-member">
-      <img class="team-avatar" src="mascot-waylon.png" alt="Waylon the pup">
-      <div>
-        <div class="team-name">Waylon</div>
-        <div class="team-role">Reading Guide</div>
-      </div>
-      <p class="team-bio">High-fives ready — Waylon dives into every story with full enthusiasm.</p>
-    </div>
-
-    <div class="team-member">
-      <img class="team-avatar" src="mascot-poppie.png" alt="Poppie the possum">
-      <div>
-        <div class="team-name">Poppie</div>
-        <div class="team-role">Comprehension Coach</div>
-      </div>
-      <p class="team-bio">Poppie catches every detail and cheers extra loud for a job well done.</p>
-    </div>
-
-    <div class="team-member">
-      <img class="team-avatar" src="mascot-milo.png" alt="Milo the raccoon">
-      <div>
-        <div class="team-name">Milo</div>
-        <div class="team-role">Literacy Expert</div>
-      </div>
-      <p class="team-bio">Cool, sharp, and detail-obsessed — Milo knows every phonics rule in the book.</p>
-    </div>
-
-    <div class="team-member">
-      <img class="team-avatar" src="mascot-stela.png" alt="Stela the corgi">
-      <div>
-        <div class="team-name">Stela</div>
-        <div class="team-role">Confidence Coach</div>
-      </div>
-      <p class="team-bio">Stylish and social, Stela helps students find the right words in real conversations.</p>
-    </div>
-
-    <div class="team-member">
-      <img class="team-avatar" src="mascot-rebel.png" alt="Rebel the graduate pup">
-      <div>
-        <div class="team-name">Rebel</div>
-        <div class="team-role">Vocabulary Pro</div>
-      </div>
-      <p class="team-bio">Cap, gown, and all the right words — Rebel makes new vocabulary stick.</p>
-    </div>
-
-    <div class="team-member">
-      <img class="team-avatar" src="mascot-theo.png" alt="Theo the bear">
-      <div>
-        <div class="team-name">Theo</div>
-        <div class="team-role">Team Captain</div>
-      </div>
-      <p class="team-bio">Always waving hello, Theo makes sure every visitor feels welcome from the start.</p>
-    </div>
-
-  </div>
-</section>
-
-<footer>
-  Made with <span>♥</span> for students everywhere
-</footer>
-
-<script>
-  // Generate starfield
-  const container = document.getElementById('stars');
-  for (let i = 0; i < 120; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    const size = Math.random() * 2.5 + 0.8;
-    s.style.cssText = `
-      width:${size}px; height:${size}px;
-      left:${Math.random()*100}%;
-      top:${Math.random()*100}%;
-      --d:${(Math.random()*4+2).toFixed(1)}s;
-      --delay:-${(Math.random()*6).toFixed(1)}s;
-      --op:${(Math.random()*.6+.3).toFixed(2)};
-    `;
-    container.appendChild(s);
-  }
-</script>
+  <script type="text/babel" src="data.jsx"></script>
+  <script type="text/babel" src="sound.jsx"></script>
+  <script type="text/babel" src="mascot.jsx"></script>
+  <script type="text/babel" src="ui.jsx"></script>
+  <script type="text/babel" src="story-fiction.jsx"></script>
+  <script type="text/babel" src="story-nonfiction.jsx"></script>
+  <script type="text/babel" src="storygen.jsx"></script>
+  <script type="text/babel" src="generate.jsx"></script>
+  <script type="text/babel" src="narrate.jsx"></script>
+  <script type="text/babel" src="worksheet.jsx"></script>
+  <script type="text/babel" src="profiles.jsx"></script>
+  <script type="text/babel" src="progress.jsx"></script>
+  <script type="text/babel" src="teacher.jsx"></script>
+  <script type="text/babel" src="screens.jsx"></script>
+  <script type="text/babel" src="quiz.jsx"></script>
+  <script type="text/babel" src="therapist.jsx"></script>
+  <script type="text/babel" src="app.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="tweaks.jsx"></script>
 </body>
 </html>
