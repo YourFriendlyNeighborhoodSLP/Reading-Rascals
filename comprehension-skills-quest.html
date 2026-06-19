@@ -25,7 +25,7 @@
     --text-primary:#312e4f;
     --text-secondary:#6b7280;
     --border:#ede9fe;
-    --border-light:#e9d5ff;
+    --border-light:#d8b4fe;
     --shadow-md:0 4px 14px rgba(124,58,237,.10);
     --shadow-lg:0 14px 34px rgba(124,58,237,.16);
   }
@@ -39,13 +39,14 @@
     min-height:100vh;
   }
 
-  #app{max-width:880px; margin:0 auto; padding-bottom:60px;}
+  /* ============ MAIN APP CONTAINER — fixed, consistent width ============ */
+  #app{max-width:540px; margin:0 auto; padding-bottom:60px; position:relative;}
 
   /* ============ TOP BAR / PROGRESS ============ */
   header.top-bar{
     background:linear-gradient(135deg,#9333ea,#ec4899);
-    padding:20px 24px 26px;
-    border-radius:0 0 24px 24px;
+    padding:26px 22px 30px;
+    border-radius:0 0 16px 16px;
     box-shadow:var(--shadow-lg);
     position:relative; overflow:hidden;
   }
@@ -54,19 +55,19 @@
     width:180px; height:180px; border-radius:50%; background:rgba(255,255,255,.10);
   }
   .top-bar-inner{position:relative; z-index:1;}
-  .student-bar{display:flex; justify-content:space-between; align-items:center; font-size:.85rem; margin-bottom:12px; color:white;}
+  .student-bar{display:flex; justify-content:space-between; align-items:center; font-size:.85rem; margin-bottom:14px; color:white;}
   .student-bar button{background:rgba(255,255,255,.2); border:none; color:white; border-radius:8px; padding:5px 12px; cursor:pointer; font-size:.78rem; font-weight:600;}
   .student-bar button:hover{background:rgba(255,255,255,.32);}
-  .top-bar h1{margin:0 0 2px; font-size:1.4rem; font-weight:800; color:white; letter-spacing:-0.4px;}
-  .top-bar p{margin:0; color:rgba(255,255,255,.92); font-size:.88rem;}
+  .top-bar h1{margin:0 0 6px; font-size:1.4rem; font-weight:800; color:white; letter-spacing:-0.4px; line-height:1.3;}
+  .top-bar p{margin:0; color:rgba(255,255,255,.92); font-size:.88rem; line-height:1.5;}
 
-  .quest-progress{display:none; margin-top:16px;}
+  .quest-progress{display:none; margin-top:18px;}
   .quest-progress.show{display:block;}
   .quest-progress-label{font-size:.82rem; font-weight:700; color:white; margin-bottom:6px;}
   .progress-track{background:rgba(255,255,255,.28); border-radius:999px; height:9px; overflow:hidden;}
   .progress-fill{height:100%; background:linear-gradient(90deg,#5eead4,#fde047); border-radius:999px; transition:width .4s ease;}
 
-  main{padding:24px 20px 10px;}
+  main{padding:24px 18px 10px;}
 
   /* ============ VIEW TOGGLING ============ */
   .view{display:none;}
@@ -74,7 +75,7 @@
   @keyframes fadeIn{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
 
   /* ============ SCREEN CARD (login / dashboard centerpieces) ============ */
-  .screen-card{max-width:440px; margin:30px auto 0; background:#ffffff; border:1px solid var(--border-light); border-radius:20px; padding:32px 28px; box-shadow:var(--shadow-lg); text-align:center;}
+  .screen-card{max-width:460px; margin:30px auto 0; background:#ffffff; border:1px solid var(--border-light); border-radius:20px; padding:32px 26px; box-shadow:var(--shadow-lg); text-align:center;}
   .screen-card .big-emoji{font-size:2.4rem;}
   .screen-card h2{margin:6px 0 6px; font-size:1.3rem; color:var(--heading);}
   .screen-card .sub{color:var(--text-secondary); font-size:.88rem; margin-bottom:6px; line-height:1.5;}
@@ -87,6 +88,10 @@
   .stat-card{background:var(--purple-light); border:1px solid var(--border-light); border-radius:14px; padding:16px; text-align:center;}
   .stat-card .stat-value{font-size:1.6rem; font-weight:800; color:var(--pink);}
   .stat-card .stat-label{font-size:.76rem; color:var(--text-secondary); margin-top:2px; text-transform:uppercase; letter-spacing:.4px;}
+
+  .mode-section{margin-top:24px; text-align:left;}
+  .mode-label{font-size:.78rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px;}
+  .mode-btn-stack{display:flex; flex-direction:column; gap:10px;}
 
   /* ============ SHARED MODULE CHROME ============ */
   .module-header{display:flex; align-items:center; gap:12px; margin-bottom:16px;}
@@ -101,9 +106,13 @@
   .btn:active{transform:scale(.96);}
   .btn-primary{background:linear-gradient(135deg,#9333ea,#ec4899); color:white;}
   .btn-primary:hover{box-shadow:0 0 0 3px rgba(236,72,153,.25);}
+  .btn-endless{background:linear-gradient(135deg,#ec4899,#eab308); color:white;}
+  .btn-endless:hover{box-shadow:0 0 0 3px rgba(234,179,8,.3);}
   .btn-secondary{background:var(--purple-light); color:var(--purple-dark); border:1px solid var(--border-light);}
   .btn-secondary:hover{background:#ecd9ff; border-color:var(--purple); color:var(--purple-dark);}
   .btn-success{background:linear-gradient(135deg,#0d9488,#0f766e); color:white;}
+  .btn-launchpad{background:linear-gradient(135deg,#0d9488,#9333ea); color:white; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:6px;}
+  .btn-launchpad:hover{box-shadow:0 0 0 3px rgba(147,51,234,.25);}
   .btn:disabled{opacity:.4; cursor:not-allowed;}
   .hidden-btn{display:none;}
   .hidden-btn.show{display:inline-block;}
@@ -158,6 +167,34 @@
   .star-row{font-size:2.2rem; letter-spacing:6px; margin:14px 0;}
   .breakdown-row{display:flex; justify-content:space-between; align-items:center; padding:10px 4px; border-bottom:1px solid var(--border); font-size:.88rem;}
   .breakdown-row:last-child{border-bottom:none;}
+  .button-stack{display:flex; flex-direction:column; gap:10px; margin-top:18px;}
+  .button-row{display:flex; gap:10px;}
+  .button-row .btn{flex:1;}
+
+  /* ============ FLOATING MASCOT + BRAND WATERMARK ============ */
+  /* Only shown on the login / dashboard screens — toggled via JS so they
+     never sit on top of quest gameplay text or buttons. */
+  .mascot-float{
+    position:fixed; bottom:18px; right:18px; width:88px; height:auto;
+    z-index:40; pointer-events:none; display:none;
+    filter:drop-shadow(0 6px 14px rgba(124,58,237,.35));
+  }
+  .mascot-float.show{display:block;}
+  @media (max-width:640px){
+    .mascot-float{width:54px; bottom:10px; right:10px; opacity:.9;}
+  }
+
+  .brand-watermark{
+    position:fixed; bottom:16px; left:16px; font-size:.72rem; font-weight:600;
+    color:var(--purple-dark); background:rgba(255,255,255,.9); text-decoration:none;
+    padding:6px 12px; border-radius:999px; box-shadow:var(--shadow-md); z-index:40;
+    border:1px solid var(--border-light); display:none; align-items:center; gap:5px;
+  }
+  .brand-watermark.show{display:inline-flex;}
+  .brand-watermark:hover{background:var(--purple-light);}
+  @media (max-width:640px){
+    .brand-watermark{font-size:.62rem; padding:4px 9px; bottom:10px; left:10px;}
+  }
 
   /* ============ TOAST ============ */
   .toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--heading); color:white; padding:12px 20px; border-radius:12px; font-size:.85rem; font-weight:600; box-shadow:var(--shadow-lg); opacity:0; pointer-events:none; transition:.3s; z-index:1000; max-width:90%; text-align:center; border:1px solid rgba(255,255,255,.15);}
@@ -165,95 +202,15 @@
 
   .confetti-piece{position:fixed; top:-10px; font-size:1.4rem; pointer-events:none; z-index:999; animation:fall linear forwards;}
   @keyframes fall{to{transform:translateY(105vh) rotate(360deg); opacity:0.3;}}
-
-  /* ============ MASCOT ============ */
-  #mascot-wrap{
-    position:fixed; bottom:18px; right:18px; z-index:900;
-    display:flex; flex-direction:column; align-items:center; gap:6px;
-    pointer-events:none;
-  }
-  #mascot-bubble{
-    background:#ffffff; border:2px solid var(--purple); border-radius:14px;
-    padding:8px 13px; font-size:.82rem; font-weight:700; color:var(--purple-dark);
-    box-shadow:var(--shadow-md); max-width:160px; text-align:center;
-    opacity:0; transform:translateY(6px) scale(.92);
-    transition:opacity .25s ease, transform .25s ease;
-    position:relative;
-  }
-  #mascot-bubble::after{
-    content:''; position:absolute; bottom:-9px; left:50%; transform:translateX(-50%);
-    border:5px solid transparent; border-top-color:var(--purple);
-  }
-  #mascot-bubble.show{ opacity:1; transform:translateY(0) scale(1); }
-
-  #mascot-name-tag{
-    background:linear-gradient(135deg,#9333ea,#ec4899); color:white;
-    font-size:.66rem; font-weight:800; letter-spacing:.2px;
-    border-radius:999px; padding:3px 11px;
-    box-shadow:0 3px 8px rgba(124,58,237,.3);
-    white-space:nowrap;
-  }
-
-  #mascot-img{
-    width:100px; height:100px; object-fit:contain;
-    border-radius:50%;
-    filter:drop-shadow(0 6px 14px rgba(91,51,214,.45));
-    transition:transform .2s ease;
-    pointer-events:none; display:block;
-  }
-  #mascot-img[src=""],#mascot-img:not([src]){display:none;}
-
-  #mascot-emoji{
-    font-size:3rem; line-height:1;
-    filter:drop-shadow(0 4px 8px rgba(124,58,237,.3));
-    transition:transform .2s ease;
-  }
-  @keyframes mascot-bounce{
-    0%,100%{transform:translateY(0) scale(1);}
-    25%{transform:translateY(-12px) scale(1.08);}
-    50%{transform:translateY(-6px) scale(1.04);}
-    75%{transform:translateY(-10px) scale(1.06);}
-  }
-  @keyframes mascot-shake{
-    0%,100%{transform:translateX(0) rotate(0deg);}
-    20%{transform:translateX(-6px) rotate(-4deg);}
-    40%{transform:translateX(6px) rotate(4deg);}
-    60%{transform:translateX(-4px) rotate(-2deg);}
-    80%{transform:translateX(4px) rotate(2deg);}
-  }
-  .mascot-celebrate{ animation:mascot-bounce .7s ease forwards !important; }
-  .mascot-tryagain{ animation:mascot-shake .5s ease forwards !important; }
-
-  /* ============ READ PASSAGE AGAIN BUTTON ============ */
-  .read-again-btn{
-    display:inline-flex; align-items:center; gap:6px;
-    background:var(--purple-light); border:1px solid var(--purple);
-    color:var(--purple-dark); border-radius:999px;
-    padding:6px 14px; font-size:.8rem; font-weight:700;
-    cursor:pointer; margin-bottom:4px; transition:.18s;
-  }
-  .read-again-btn:hover{ background:var(--purple); color:white; }
-
-  /* ============ BRAND WATERMARK ============ */
-  #brand-watermark{
-    position:fixed; bottom:18px; left:18px; z-index:900;
-    display:flex; align-items:center; gap:6px;
-    background:rgba(255,255,255,.88); backdrop-filter:blur(4px);
-    border:1px solid var(--border-light); border-radius:999px;
-    padding:6px 13px 6px 9px;
-    font-size:.72rem; font-weight:700; color:var(--purple-dark);
-    box-shadow:var(--shadow-md);
-    pointer-events:none; user-select:none;
-  }
-  #brand-watermark .bw-rocket{font-size:.9rem;}
-  @media (max-width:560px){
-    #brand-watermark{ font-size:.62rem; padding:5px 10px 5px 8px; bottom:14px; left:14px; }
-  }
 </style>
 </head>
 <body>
 
 <div id="app">
+
+  <!-- Floating mascot + brand watermark: single shared instances, shown only on login/dashboard via Nav -->
+  <img id="floating-mascot" class="mascot-float" alt="Poppie the mascot" onerror="this.style.display='none';">
+  <a id="brand-watermark" class="brand-watermark" href="https://yourfriendlyneighborhoodslp.github.io/">🛡️ Your Friendly Neighborhood SLP</a>
 
   <header class="top-bar">
     <div class="top-bar-inner">
@@ -262,7 +219,7 @@
         <button onclick="App.switchStudent()">Switch Student</button>
       </div>
       <h1>🚀 Comprehension Skills Quest</h1>
-      <p>Five passages. Three skills each. One quest.</p>
+      <p>Three skills per passage. Play a 5-passage quest, or go endless.</p>
       <div class="quest-progress" id="quest-progress">
         <div class="quest-progress-label" id="quest-progress-label">Passage 1 of 5 | Skill: The Core</div>
         <div class="progress-track"><div class="progress-fill" id="quest-progress-fill" style="width:0%;"></div></div>
@@ -289,7 +246,7 @@
       <div class="screen-card" style="max-width:520px;">
         <div class="big-emoji">🧭</div>
         <h2 id="dash-greeting">Ready for your next quest?</h2>
-        <p class="sub">Each quest session is 5 passages. For every passage you'll tackle The Core, The Timeline, and The Detective in order.</p>
+        <p class="sub">Choose a 5-passage quest for a quick session, or play endless mode for as long as you like.</p>
 
         <div class="stat-grid">
           <div class="stat-card">
@@ -302,7 +259,15 @@
           </div>
         </div>
 
-        <button class="btn btn-primary" style="width:100%; margin-top:22px; padding:14px;" onclick="Quest.start()">Start New Quest Session 🚀</button>
+        <div class="mode-section">
+          <div class="mode-label">Choose Your Mode</div>
+          <div class="mode-btn-stack">
+            <button class="btn btn-primary" style="padding:14px;" onclick="Quest.start('five')">🚀 Start 5-Passage Quest</button>
+            <button class="btn btn-endless" style="padding:14px;" onclick="Quest.start('endless')">♾️ Start Endless Play</button>
+          </div>
+        </div>
+
+        <a class="btn btn-launchpad" style="width:100%; margin-top:20px; padding:14px;" href="https://yourfriendlyneighborhoodslp.github.io/">🏠 Return to Launch Pad</a>
       </div>
     </section>
 
@@ -318,8 +283,7 @@
         <div id="mi-text"></div>
       </div>
       <div class="card">
-        <p style="font-weight:700; margin-top:0; margin-bottom:6px; color:#581c87;" id="mi-question"></p>
-        <button class="read-again-btn" onclick="Nav._scrollToPassage('mi-text')">📖 Read Passage Again</button>
+        <p style="font-weight:700; margin-top:0; margin-bottom:14px; color:#581c87;" id="mi-question"></p>
         <div id="mi-choices"></div>
         <div class="feedback-panel" id="mi-feedback"></div>
         <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
@@ -341,8 +305,7 @@
         <div id="seq-text"></div>
       </div>
       <div class="card">
-        <p style="font-weight:700; color:var(--text-secondary); font-size:.86rem; margin-top:0; margin-bottom:6px;">Click the events below in the order they happened. Click a filled slot to undo it.</p>
-        <button class="read-again-btn" onclick="Nav._scrollToPassage('seq-text')">📖 Read Passage Again</button>
+        <p style="font-weight:700; color:var(--text-secondary); font-size:.86rem; margin-top:0;">Click the events below in the order they happened. Click a filled slot to undo it.</p>
         <div class="seq-slots" id="seq-slots"></div>
         <div class="pool-label">Mixed-up events:</div>
         <div class="pool-area" id="seq-pool"></div>
@@ -371,7 +334,6 @@
           <strong>Your Mission</strong>
           <span id="det-question"></span>
         </div>
-        <button class="read-again-btn" onclick="Nav._scrollToPassage('det-text')">📖 Read Passage Again</button>
 
         <div class="write-box hidden-btn" id="det-write-wrap">
           <label>✍️ Write your answer:</label>
@@ -395,15 +357,18 @@
         <p class="sub" id="pc-passage-title"></p>
         <div class="star-row" id="pc-stars"></div>
         <div style="text-align:left; margin-top:10px;" id="pc-breakdown"></div>
-        <button class="btn btn-primary" style="width:100%; margin-top:20px; padding:14px;" id="pc-next-btn" onclick="Quest.nextPassage()">Next Passage →</button>
+        <div class="button-stack">
+          <button class="btn btn-primary" style="padding:14px;" id="pc-next-btn" onclick="Quest.nextPassage()">Next Passage →</button>
+          <button class="btn btn-secondary hidden-btn show" style="padding:12px;" id="pc-end-btn" onclick="Quest.endSessionEarly()">End Session & See Results 🏁</button>
+        </div>
       </div>
     </section>
 
-    <!-- ===================== QUEST COMPLETE ===================== -->
+    <!-- ===================== QUEST / SESSION COMPLETE ===================== -->
     <section class="view" id="view-quest-complete">
       <div class="screen-card complete-card" style="max-width:520px;">
         <div class="big-emoji">🏆</div>
-        <h2>Quest Complete!</h2>
+        <h2 id="qc-heading">Quest Complete!</h2>
         <p class="sub" id="qc-session-stars"></p>
         <div style="text-align:left; margin-top:14px;" id="qc-breakdown"></div>
         <div class="stat-grid" style="margin-top:18px;">
@@ -416,38 +381,43 @@
             <div class="stat-label">Quests Completed</div>
           </div>
         </div>
-        <div style="display:flex; gap:10px; margin-top:20px;">
-          <button class="btn btn-secondary" style="flex:1;" onclick="Nav.show('dashboard'); refreshDashboard();">Dashboard</button>
-          <button class="btn btn-primary" style="flex:1;" onclick="Quest.start()">Play Again 🚀</button>
+        <div class="button-row" style="margin-top:20px;">
+          <button class="btn btn-secondary" onclick="Nav.show('dashboard'); refreshDashboard();">Dashboard</button>
+          <button class="btn btn-primary" onclick="Quest.start(Quest.mode)">Play Again 🚀</button>
         </div>
+        <a class="btn btn-launchpad" style="width:100%; margin-top:10px; padding:14px;" href="https://yourfriendlyneighborhoodslp.github.io/">🏠 Return to Launch Pad</a>
       </div>
     </section>
 
   </main>
 </div>
 
-<!-- ===================== BRAND WATERMARK ===================== -->
-<div id="brand-watermark"><span class="bw-rocket">🚀</span> Your Friendly Neighborhood SLP</div>
-
-<!-- ===================== MASCOT ===================== -->
-<div id="mascot-wrap">
-  <div id="mascot-bubble"></div>
-  <div id="mascot-name-tag"></div>
-  <img id="mascot-img" alt="Guide mascot" data-loaded="0">
-  <div id="mascot-emoji">🦉</div>
-</div>
-
 <script>
+/* =========================================================================
+   MASCOTS
+   Shared roster reference for the Your Friendly Neighborhood SLP suite.
+   Image filenames are prefixed "mascot-" to match the live GitHub assets.
+   CSQ uses Poppie as its guide character on the login/dashboard screens.
+   Adjust ACTIVE_MASCOT.image's folder prefix if your file structure differs.
+========================================================================= */
+const MASCOTS = {
+  waylon: { name: "Waylon", image: "assets/mascot-waylon.png" },
+  poppie: { name: "Poppie", image: "assets/mascot-poppie.png" },
+  rebel:  { name: "Rebel",  image: "assets/mascot-rebel.png" },
+  milo:   { name: "Milo",   image: "assets/mascot-milo.png" },
+  stela:  { name: "Stela",  image: "assets/mascot-stela.png" },
+  theo:   { name: "Theo",   image: "assets/mascot-theo.png" }
+};
+const ACTIVE_MASCOT = MASCOTS.poppie;
+const LAUNCH_PAD_URL = "https://yourfriendlyneighborhoodslp.github.io/";
+
 /* =========================================================================
    PASSAGE BANK
    5 self-contained passages. Each has paragraphs (always shown), an
-   optional sentences[] array (only used if a detailsQuestion.type is ever
-   set to "click"), a main idea question, 4 sequence events in correct
-   order, and a details question. Per the current Skill 3 design, every
-   passage below uses type "text" (a typed, evidence-based answer hosted
-   by Poppie) — the "click the exact sentence" variant still works in code
-   if you want to bring it back for a future passage, just set a
-   detailsQuestion's type to "click" with a question + targetIndex.
+   optional sentences[] array (only used when detailsQuestion.type is
+   "click"), a main idea question, 4 sequence events in correct order, and
+   a details question that is either "click" (find the exact sentence) or
+   "text" (write a short response).
 ========================================================================= */
 const PASSAGE_BANK = [
   {
@@ -490,9 +460,9 @@ const PASSAGE_BANK = [
       "Scientists study the glowing proteins to create new tools, such as glowing markers for medical research."
     ],
     detailsQuestion: {
-      type: "text",
-      prompt: "In your own words, explain why producing their own light helps deep-sea creatures survive. Use a detail from the passage to support your answer.",
-      minWords: 6
+      type: "click",
+      question: "Click the exact sentence that explains why producing light helps deep-sea creatures survive.",
+      targetIndex: 8
     }
   },
 
@@ -565,9 +535,9 @@ const PASSAGE_BANK = [
       "Today, the surviving sections of the wall attract millions of visitors as a historical landmark."
     ],
     detailsQuestion: {
-      type: "text",
-      prompt: "In your own words, explain why the Ming dynasty's rebuilding made the Great Wall more durable than earlier sections. Use a detail from the passage to support your answer.",
-      minWords: 6
+      type: "click",
+      question: "Click the exact sentence that explains why the Ming dynasty's rebuilding made the wall more durable.",
+      targetIndex: 6
     }
   },
 
@@ -642,9 +612,9 @@ const PASSAGE_BANK = [
       "The eruption releases lava that eventually cools and hardens into new rock."
     ],
     detailsQuestion: {
-      type: "text",
-      prompt: "In your own words, explain what causes pressure to build up beneath a volcano before it erupts. Use a detail from the passage to support your answer.",
-      minWords: 6
+      type: "click",
+      question: "Click the exact sentence that explains what causes pressure to build up beneath a volcano.",
+      targetIndex: 4
     }
   }
 ];
@@ -696,25 +666,25 @@ function renderStars(count, total) {
 
 /* =========================================================================
    PERSISTENT STORAGE + PLAYER (cumulative lifetime stats)
-   Uses the browser's own localStorage so progress is saved per-device
-   directly on GitHub Pages (no external service needed).
 ========================================================================= */
 const Storage = {
   keyFor(name) {
     const clean = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
     return "csq-player-" + (clean || "anonymous");
   },
-  load(name) {
+  async load(name) {
+    if (!window.storage) return null;
     try {
-      const raw = localStorage.getItem(this.keyFor(name));
-      return raw ? JSON.parse(raw) : null;
+      const res = await window.storage.get(this.keyFor(name), false);
+      return res ? JSON.parse(res.value) : null;
     } catch (e) {
       return null;
     }
   },
-  save(player) {
+  async save(player) {
+    if (!window.storage) return;
     try {
-      localStorage.setItem(this.keyFor(player.name), JSON.stringify(player));
+      await window.storage.set(this.keyFor(player.name), JSON.stringify(player), false);
     } catch (e) {
       console.error("Could not save progress", e);
       Toast.show("⚠️ Could not save progress right now.");
@@ -735,8 +705,15 @@ const Player = {
     return !!existing;
   },
 
-  addSessionStars(stars) {
-    this.totalStars += stars;
+  // Called after every single passage (both modes) so progress is never lost.
+  addStars(n) {
+    this.totalStars += n;
+    Storage.save({ name: this.name, totalStars: this.totalStars, sessionsCompleted: this.sessionsCompleted });
+  },
+
+  // Called once when a session is deliberately finished (5-passage quest end,
+  // or a manual "End Session" in endless mode).
+  completeSession() {
     this.sessionsCompleted += 1;
     Storage.save({ name: this.name, totalStars: this.totalStars, sessionsCompleted: this.sessionsCompleted });
   }
@@ -763,65 +740,34 @@ const Toast = {
 };
 
 /* =========================================================================
-   TEXT-TO-SPEECH — natural voice picker
-   Priority: Google/Microsoft neural voices > Apple Samantha > any en-US > fallback
+   TEXT-TO-SPEECH ("Read to Me")
 ========================================================================= */
 const TTS = {
   activeBtnId: null,
-  _voice: null,
-  _voiceReady: false,
-
-  // Pick the best available English voice once voices load
-  _pickVoice() {
-    const voices = speechSynthesis.getVoices();
-    if (!voices.length) return;
-    const priority = [
-      v => /google us english/i.test(v.name),
-      v => /microsoft (aria|jenny|guy|zira)/i.test(v.name),
-      v => /samantha/i.test(v.name),
-      v => v.lang === 'en-US' && v.localService,
-      v => v.lang.startsWith('en') && v.localService,
-      v => v.lang.startsWith('en'),
-    ];
-    for (const test of priority) {
-      const match = voices.find(test);
-      if (match) { this._voice = match; break; }
-    }
-    this._voiceReady = true;
-  },
-
-  init() {
-    if (!("speechSynthesis" in window)) return;
-    if (speechSynthesis.getVoices().length) { this._pickVoice(); }
-    speechSynthesis.onvoiceschanged = () => this._pickVoice();
-  },
-
   toggle(text, btnId) {
     if (!("speechSynthesis" in window)) {
       Toast.show("Read-aloud isn't supported in this browser.");
       return;
     }
     if (this.activeBtnId === btnId && speechSynthesis.speaking) {
-      this.stop(); return;
+      this.stop();
+      return;
     }
     this.stop();
     const utter = new SpeechSynthesisUtterance(text);
-    utter.rate  = 0.92;
-    utter.pitch = 1.0;
-    if (this._voice) utter.voice = this._voice;
-    utter.onend   = () => this.clearActive();
+    utter.rate = 0.95;
+    utter.onend = () => this.clearActive();
     utter.onerror = () => this.clearActive();
     this.activeBtnId = btnId;
     const btn = document.getElementById(btnId);
-    if (btn) { btn.classList.add("speaking"); btn.innerHTML = "⏸ Stop Reading"; }
+    btn.classList.add("speaking");
+    btn.innerHTML = "⏸ Stop Reading";
     speechSynthesis.speak(utter);
   },
-
   stop() {
     if ("speechSynthesis" in window) speechSynthesis.cancel();
     this.clearActive();
   },
-
   clearActive() {
     if (this.activeBtnId) {
       const btn = document.getElementById(this.activeBtnId);
@@ -832,102 +778,10 @@ const TTS = {
 };
 
 /* =========================================================================
-   MASCOT TEAM — each skill is hosted by a specific character from the
-   "Your Friendly Neighborhood SLP" mascot cast. Swap any assignment below
-   by changing the VIEW_MASCOTS table — nothing else needs to change.
-
-   Image files are expected at the root of the repo, e.g. "waylon.png".
-   If a file is missing, the matching emoji is shown automatically instead,
-   so the app never breaks while art is still being added.
-========================================================================= */
-const MASCOTS = {
-  waylon: { name: "Waylon", role: "Story Guide",      img: "waylon.png", emoji: "🦊" },
-  theo:   { name: "Theo",   role: "Welcome Guide",     img: "theo.png",   emoji: "🦉" },
-  milo:   { name: "Milo",   role: "Timeline Helper",   img: "milo.png",   emoji: "🦫" },
-  stela:  { name: "Stela",  role: "Timeline Helper",   img: "stela.png",  emoji: "🌟" },
-  poppie: { name: "Poppie", role: "Detail Detective",  img: "poppie.png", emoji: "🦝" }
-};
-
-// Which mascot hosts each screen. Edit this table to reassign characters —
-// e.g. change "sequence" to "stela" to swap Milo out for Stela.
-const VIEW_MASCOTS = {
-  "login":             "theo",
-  "dashboard":         "theo",
-  "mainidea":          "waylon",
-  "sequence":          "milo",
-  "details":           "poppie",
-  "passage-complete":  "poppie",
-  "quest-complete":    "theo"
-};
-
-/* =========================================================================
-   MASCOT — celebrates correct answers, encourages retries on wrong ones,
-   and swaps its art/name/role to whichever character is hosting the
-   current screen (see VIEW_MASCOTS above).
-========================================================================= */
-const Mascot = {
-  _timer: null,
-  current: null,
-
-  _el() {
-    const img = document.getElementById("mascot-img");
-    return img.dataset.loaded === "1" ? img : document.getElementById("mascot-emoji");
-  },
-
-  // Switch the visible character. Tries the real artwork first and falls
-  // back to the emoji automatically if that image file isn't present yet.
-  setActive(key) {
-    const data = MASCOTS[key];
-    if (!data || this.current === key) return;
-    this.current = key;
-
-    const img = document.getElementById("mascot-img");
-    const emoji = document.getElementById("mascot-emoji");
-    const nameTag = document.getElementById("mascot-name-tag");
-
-    img.dataset.loaded = "0";
-    img.style.display = "none";
-    emoji.style.display = "block";
-    emoji.textContent = data.emoji;
-
-    img.onload = () => { img.dataset.loaded = "1"; img.style.display = "block"; emoji.style.display = "none"; };
-    img.onerror = () => { img.dataset.loaded = "0"; img.style.display = "none"; emoji.style.display = "block"; };
-    img.src = data.img;
-    img.alt = data.name + " mascot";
-
-    nameTag.textContent = `${data.name} · ${data.role}`;
-  },
-
-  _say(msg, durationMs = 3000) {
-    const bubble = document.getElementById("mascot-bubble");
-    bubble.textContent = msg;
-    bubble.classList.add("show");
-    clearTimeout(this._timer);
-    this._timer = setTimeout(() => bubble.classList.remove("show"), durationMs);
-  },
-
-  _animate(cls) {
-    const el = this._el();
-    el.classList.remove("mascot-celebrate", "mascot-tryagain");
-    // force reflow so animation restarts even if same class
-    void el.offsetWidth;
-    el.classList.add(cls);
-    setTimeout(() => el.classList.remove(cls), 800);
-  },
-
-  celebrate(message) {
-    this._animate("mascot-celebrate");
-    this._say(message || "🎉 Great job!", 3000);
-  },
-
-  tryAgain(message) {
-    this._animate("mascot-tryagain");
-    this._say(message || "💪 Try again!", 3500);
-  }
-};
-
-/* =========================================================================
    NAVIGATION
+   Also controls visibility of the floating mascot + brand watermark, which
+   only ever appear on the login / dashboard screens so they can never sit
+   on top of quest text or buttons.
 ========================================================================= */
 const Nav = {
   show(viewName) {
@@ -937,29 +791,29 @@ const Nav = {
       "show",
       ["mainidea", "sequence", "details"].includes(viewName)
     );
-    if (VIEW_MASCOTS[viewName]) Mascot.setActive(VIEW_MASCOTS[viewName]);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  },
 
-  // Smoothly scroll the passage text container into view
-  _scrollToPassage(elId) {
-    const el = document.getElementById(elId);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    const showCompanions = viewName === "login" || viewName === "dashboard";
+    document.getElementById("floating-mascot").classList.toggle("show", showCompanions);
+    document.getElementById("brand-watermark").classList.toggle("show", showCompanions);
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 };
 
-// Init natural voice picking as early as possible, and bring Theo
-// on screen to greet whoever opens the app.
-TTS.init();
-Mascot.setActive("theo");
-
 function updateProgressBar() {
-  const total = Quest.order.length;
   const skillIdx = SKILL_ORDER_INDEX[Quest.currentSkill];
-  document.getElementById("quest-progress-label").textContent =
-    `Passage ${Quest.currentIndex + 1} of ${total} | Skill: ${SKILL_LABELS[Quest.currentSkill]}`;
-  const pct = ((Quest.currentIndex * 3 + skillIdx) / (total * 3)) * 100;
-  document.getElementById("quest-progress-fill").style.width = pct + "%";
+  if (Quest.mode === "five") {
+    const total = Quest.queue.length;
+    document.getElementById("quest-progress-label").textContent =
+      `Passage ${Quest.currentIndex + 1} of ${total} | Skill: ${SKILL_LABELS[Quest.currentSkill]}`;
+    const pct = ((Quest.currentIndex * 3 + skillIdx) / (total * 3)) * 100;
+    document.getElementById("quest-progress-fill").style.width = pct + "%";
+  } else {
+    document.getElementById("quest-progress-label").textContent =
+      `♾️ Endless Play — Passage ${Quest.currentIndex + 1} | Skill: ${SKILL_LABELS[Quest.currentSkill]} | ⭐ ${Quest.sessionStars} this session`;
+    const pct = (skillIdx / 3) * 100;
+    document.getElementById("quest-progress-fill").style.width = pct + "%";
+  }
 }
 
 /* =========================================================================
@@ -1017,22 +871,26 @@ function launchConfetti(count = 16) {
 }
 
 /* =========================================================================
-   QUEST CONTROLLER — drives the 5-passage game loop
+   QUEST CONTROLLER — drives both the 5-passage quest and endless mode
 ========================================================================= */
 const Quest = {
-  order: [],            // shuffled passage indices for this session
-  currentIndex: 0,      // position within order (0-4)
+  mode: "five",          // "five" | "endless"
+  queue: [],             // ordered list of passage-bank indices to play
+  currentIndex: 0,       // position within queue
   currentSkill: "mainidea",
   firstTry: { mainidea: false, sequence: false, details: false },
   attemptedWrong: { mainidea: false, sequence: false, details: false },
-  results: [],          // per-passage outcome for the final summary
+  sessionResults: [],    // [{ title, stars, firstTry }] for this session
+  sessionStars: 0,       // running total earned this session
 
-  get currentPassage() { return PASSAGE_BANK[this.order[this.currentIndex]]; },
+  get currentPassage() { return PASSAGE_BANK[this.queue[this.currentIndex]]; },
 
-  start() {
-    this.order = shuffle(PASSAGE_BANK.map((p, i) => i));
+  start(mode) {
+    this.mode = mode;
+    this.queue = shuffle(PASSAGE_BANK.map((p, i) => i));
     this.currentIndex = 0;
-    this.results = [];
+    this.sessionResults = [];
+    this.sessionStars = 0;
     this.loadPassage();
   },
 
@@ -1069,25 +927,41 @@ const Quest = {
 
   finishPassage() {
     const starsEarned = Object.values(this.firstTry).filter(Boolean).length;
-    this.results.push({ title: this.currentPassage.title, stars: starsEarned, firstTry: { ...this.firstTry } });
-    Nav.show("passage-complete");
+    this.sessionResults.push({ title: this.currentPassage.title, stars: starsEarned, firstTry: { ...this.firstTry } });
+    this.sessionStars += starsEarned;
+    Player.addStars(starsEarned); // saved immediately — never lost on tab close
     PassageCompleteScreen.render(starsEarned);
+    Nav.show("passage-complete");
   },
 
+  // "Next Passage" — advances the queue. In endless mode, reshuffles and
+  // appends a fresh deck whenever the current one runs out, so play never stops.
   nextPassage() {
     this.currentIndex++;
-    if (this.currentIndex >= this.order.length) {
-      this.finishQuest();
+
+    if (this.mode === "five") {
+      if (this.currentIndex >= this.queue.length) {
+        this.finishSession();
+        return;
+      }
     } else {
-      this.loadPassage();
+      if (this.currentIndex >= this.queue.length) {
+        this.queue = this.queue.concat(shuffle(PASSAGE_BANK.map((p, i) => i)));
+      }
     }
+    this.loadPassage();
   },
 
-  finishQuest() {
-    const totalStars = this.results.reduce((sum, r) => sum + r.stars, 0);
-    Player.addSessionStars(totalStars);
+  // Student-initiated early stop (always available in endless mode; offered
+  // in five-passage mode too as a safety valve before the natural finish).
+  endSessionEarly() {
+    this.finishSession();
+  },
+
+  finishSession() {
+    Player.completeSession();
+    QuestCompleteScreen.render();
     Nav.show("quest-complete");
-    QuestCompleteScreen.render(totalStars);
   }
 };
 
@@ -1140,13 +1014,11 @@ const MainIdeaSkill = {
       feedback.textContent = "✅ That's the main idea — it captures the passage as a whole.";
       feedback.className = "feedback-panel show correct";
       document.getElementById("mi-continue-btn").classList.add("show");
-      Mascot.celebrate("⭐ That's it!");
     } else {
       feedback.textContent = "❌ Not quite. Re-read the passage and think about what ties every paragraph together.";
       feedback.className = "feedback-panel show incorrect";
       Quest.markWrongAttempt("mainidea");
       document.getElementById("mi-retry-btn").classList.add("show");
-      Mascot.tryAgain("💪 Try again!");
     }
   },
 
@@ -1251,12 +1123,10 @@ const SequenceSkill = {
       feedback.textContent = "✅ Perfect! That's the correct order of events.";
       feedback.className = "feedback-panel show correct";
       document.getElementById("seq-continue-btn").classList.add("show");
-      Mascot.celebrate("🎉 Perfect order!");
     } else {
       feedback.textContent = `You got ${correctCount} out of ${this.answer.length} in the right spot. Click a red box to remove it, then try again.`;
       feedback.className = "feedback-panel show incorrect";
       Quest.markWrongAttempt("sequence");
-      Mascot.tryAgain("🔄 Keep trying!");
     }
   }
 };
@@ -1303,14 +1173,12 @@ const DetailsSkill = {
       feedback.textContent = "✅ That's exactly the right sentence!";
       feedback.className = "feedback-panel show correct";
       document.getElementById("det-finish-btn").classList.add("show");
-      Mascot.celebrate("🔍 Nice find!");
     } else {
       Quest.markWrongAttempt("details");
       span.classList.add("wrong-flash");
       setTimeout(() => span.classList.remove("wrong-flash"), 500);
       feedback.textContent = "❌ Not that one — keep reading carefully and try another sentence.";
       feedback.className = "feedback-panel show incorrect";
-      Mascot.tryAgain("🤔 Look closer!");
     }
   },
 
@@ -1331,7 +1199,6 @@ const DetailsSkill = {
       Quest.markWrongAttempt("details");
       feedback.textContent = `✏️ Add a bit more detail — aim for at least ${dq.minWords} words in your answer.`;
       feedback.className = "feedback-panel show info";
-      Mascot.tryAgain("✏️ Say more!");
       return;
     }
 
@@ -1339,7 +1206,6 @@ const DetailsSkill = {
     feedback.textContent = "✅ Nice work — that's a thoughtful, detailed response!";
     feedback.className = "feedback-panel show correct";
     document.getElementById("det-finish-btn").classList.add("show");
-    Mascot.celebrate("✍️ Well said!");
   }
 };
 
@@ -1366,49 +1232,73 @@ const PassageCompleteScreen = {
       breakdown.appendChild(row);
     });
 
-    const isLast = Quest.currentIndex + 1 >= Quest.order.length;
-    document.getElementById("pc-next-btn").textContent = isLast ? "See My Quest Results →" : "Next Passage →";
+    const isLastOfFive = Quest.mode === "five" && (Quest.currentIndex + 1 >= Quest.queue.length);
+    document.getElementById("pc-next-btn").textContent = isLastOfFive ? "See My Quest Results →" : "Next Passage →";
+    document.getElementById("pc-end-btn").classList.toggle("show", !isLastOfFive);
 
-    if (starsEarned === 3) {
-      Mascot.celebrate("🌟 All three stars!");
-      launchConfetti(10);
-    } else if (starsEarned > 0) {
-      Mascot.celebrate("🎉 Nice work!");
-    } else {
-      Mascot.celebrate("✅ Passage done — onward!");
-    }
+    if (starsEarned === 3) launchConfetti(10);
   }
 };
 
 /* =========================================================================
-   QUEST COMPLETE SCREEN
+   QUEST / SESSION COMPLETE SCREEN
 ========================================================================= */
 const QuestCompleteScreen = {
-  render(totalStars) {
+  render() {
+    const isFive = Quest.mode === "five";
+    document.getElementById("qc-heading").textContent = isFive ? "Quest Complete!" : "Session Complete!";
+
     document.getElementById("qc-session-stars").textContent =
-      `You earned ${totalStars} out of ${Quest.results.length * 3} stars this session!`;
+      `You played ${Quest.sessionResults.length} passage${Quest.sessionResults.length === 1 ? "" : "s"} and earned ${Quest.sessionStars} star${Quest.sessionStars === 1 ? "" : "s"} this session!`;
 
     const breakdown = document.getElementById("qc-breakdown");
     breakdown.innerHTML = "";
-    Quest.results.forEach((r, i) => {
-      const row = document.createElement("div");
-      row.className = "breakdown-row";
-      const label = document.createElement("span");
-      label.textContent = `${i + 1}. ${r.title}`;
-      const stars = document.createElement("span");
-      stars.textContent = renderStars(r.stars, 3);
-      row.appendChild(label);
-      row.appendChild(stars);
-      breakdown.appendChild(row);
-    });
+
+    if (isFive) {
+      // Five-passage mode: itemized list, always exactly 5 rows.
+      Quest.sessionResults.forEach((r, i) => {
+        const row = document.createElement("div");
+        row.className = "breakdown-row";
+        const label = document.createElement("span");
+        label.textContent = `${i + 1}. ${r.title}`;
+        const stars = document.createElement("span");
+        stars.textContent = renderStars(r.stars, 3);
+        row.appendChild(label);
+        row.appendChild(stars);
+        breakdown.appendChild(row);
+      });
+    } else {
+      // Endless mode: could be many passages, so show an aggregate
+      // first-try breakdown per skill instead of one row per passage.
+      const skillCounts = { mainidea: 0, sequence: 0, details: 0 };
+      Quest.sessionResults.forEach(r => {
+        Object.keys(r.firstTry).forEach(k => { if (r.firstTry[k]) skillCounts[k]++; });
+      });
+      const totalPassages = Quest.sessionResults.length || 1;
+      ["mainidea", "sequence", "details"].forEach(key => {
+        const row = document.createElement("div");
+        row.className = "breakdown-row";
+        const label = document.createElement("span");
+        label.textContent = SKILL_LABELS[key];
+        const result = document.createElement("span");
+        result.textContent = `⭐ ${skillCounts[key]} / ${totalPassages} first-try`;
+        row.appendChild(label);
+        row.appendChild(result);
+        breakdown.appendChild(row);
+      });
+    }
 
     document.getElementById("qc-lifetime-stars").textContent = Player.totalStars + " ⭐";
     document.getElementById("qc-sessions").textContent = Player.sessionsCompleted;
 
-    Mascot.celebrate("🏆 Quest complete — way to go!");
-    launchConfetti(28);
+    launchConfetti(isFive ? 28 : 18);
   }
 };
+
+/* =========================================================================
+   INIT — set the floating mascot's image source from the active mascot
+========================================================================= */
+document.getElementById("floating-mascot").src = ACTIVE_MASCOT.image;
 </script>
 
 </body>
